@@ -1,3 +1,4 @@
+import { isUserUnauthorized, unauthorized } from "@/lib/utils/default-response";
 import { jobSchema, openai, prompt } from "@/server/config/open-ai";
 
 import { get } from "lodash";
@@ -7,6 +8,10 @@ export const POST = async (req: Request) => {
     const session = await getAuthSession();
     const body = await req.json();
     const userId = get(session, "user.id");
+
+    if (isUserUnauthorized(userId)) {
+        return unauthorized;
+    }
 
     const transaction = (await openai.schemaBasedCompletion({
         message: get(body, "text"),
