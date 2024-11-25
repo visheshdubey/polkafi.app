@@ -21,18 +21,19 @@ enum TransactionType {
 }
 
 model User {
-  id              String     @id @default(cuid())
+  id              String        @id @default(cuid())
   name            String?
-  email           String?    @unique
+  email           String?       @unique
   avatar          String?
-  defaultCurrency String?    @default("USD")
+  defaultCurrency String?       @default("USD")
   token           String?
   provider        String?
-  credits         Int        @default(5)
-  role            UserRole   @default(USER)
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  credits         Int           @default(5)
+  role            UserRole      @default(USER)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
   Category        Category[]
+  Transaction     Transaction[]
 }
 
 model Category {
@@ -47,23 +48,38 @@ model Category {
 }
 
 model Transaction {
-  id         String          @id @default(cuid())
-  particular String?
-  amount     String?
-  currency   String?
-  type       TransactionType @default(CREDIT)
-  category   Category?       @relation(fields: [categoryId], references: [id])
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
-  categoryId String?
+  id                    String               @id @default(cuid())
+  particular            String?
+  amount                BigInt
+  currency              String?              @default("USD")
+  user                  User                 @relation(fields: [userId], references: [id])
+  textToStructuredJson  TextToStruturedJson? @relation(fields: [textToStruturedJsonId], references: [id])
+  type                  TransactionType      @default(CREDIT)
+  category              Category?            @relation(fields: [categoryId], references: [id])
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+  categoryId            String?
+  textToStruturedJsonId String?
+  userId                String
 }
 
-model AIAssistedTransaction {
-  id                    String   @id @default(cuid())
-  audioUrl              String?
+model Transcription {
+  id                  String                @id @default(cuid())
+  audioUrl            String?
+  trxnText            String?
+  rawWhisperResponse  Json?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  TextToStruturedJson TextToStruturedJson[]
+}
+
+model TextToStruturedJson {
+  id                    String         @id @default(cuid())
   trxnText              String?
-  rawWhisperResponse    Json?
+  transcription         Transcription? @relation(fields: [transcriptionId], references: [id])
   rawCompletionResponse Json?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  transcriptionId       String?
+  Transaction           Transaction[]
 }

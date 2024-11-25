@@ -1,5 +1,5 @@
 import db from "@/server/db/prisma";
-import { get } from "lodash";
+import get from "lodash/get";
 
 export const fetchPaginatedTransactions = (userId: string, filters: any) => {};
 export const fetchTransactionsById = (userId: string, trxnId: string) => {};
