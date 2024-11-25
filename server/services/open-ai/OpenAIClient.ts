@@ -80,9 +80,10 @@ class OpenAIClient {
             const response = await this.client.audio.transcriptions.create({
                 file,
                 model: this.audioModel,
+                response_format: "json",
             });
 
-            return response.text;
+            return response;
         } catch (error) {
             console.error("An error occurred:", error);
             return null;

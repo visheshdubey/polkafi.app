@@ -7,9 +7,12 @@ export const createTransaction = async (userId: string, data: any) => {
     const transaction = await db.transaction.create({
         data: {
             particular: get(data, "particular"),
-            amount: get(data, "amount"),
+            amount: BigInt(get(data, "amount")),
             type: get(data, "type"),
             category: get(data, "category"),
+            textToStruturedJsonId: get(data, "textToStruturedJsonId"),
+            userId,
+            currency: get(data, "currency"),
         },
     });
 

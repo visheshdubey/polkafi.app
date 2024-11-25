@@ -1,6 +1,7 @@
 import { createTransaction } from "@/server/db/transactions";
 import { get } from "lodash";
 import { getAuthSession } from "@/features/auth/utils";
+import { serializeBigIntValues } from "@/lib/utils/bigInt-serializer";
 
 export const POST = async (req: Request) => {
     const session = await getAuthSession();
@@ -8,7 +9,7 @@ export const POST = async (req: Request) => {
     const userId = get(session, "user.id");
     const transaction = await createTransaction(userId, body);
 
-    return Response.json(transaction);
+    return Response.json(serializeBigIntValues(transaction));
 };
 
 // export const PUT = async (req: Request, { params }: { params: Promise<{ jobId: string }> }) => {
