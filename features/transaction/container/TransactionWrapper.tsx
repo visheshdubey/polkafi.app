@@ -1,5 +1,9 @@
+"use client";
+
 import { ChevronDown, Plus } from "lucide-react";
 
+import { AudioRecordContainer } from "@/features/audio-recorder/container/AudioRecordContainer";
+import AudioRecorder from "@/features/audio-recorder/components/Audiorecorder";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Chart } from "../components/chart";
@@ -60,18 +64,23 @@ const TransactionWrapper = (props: Props) => {
           >
             <Plus /> New Category
           </Button>
-          <Button size={"sm"} className="rounded-full">
-            <Plus /> New Transaction
-          </Button>
+          <AudioRecordContainer>
+            <Button size={"sm"} className="rounded-full">
+              <Plus /> New Transaction
+            </Button>
+          </AudioRecordContainer>
         </div>
       </div>
 
       <div className="w-full flex flex-col *:border-b *:border-neutral-100 last-of-type:border-b-0 rounded-xl overflow-hidden bg-white">
         {Array(12)
           .fill(null)
-          .map((item) => {
+          .map((item, index) => {
             return (
-              <div className="bg-white flex justify-between items-center lg:items-end gap-2 w-full p-3 lg:p-4">
+              <div
+                key={`tansaction-list-item-${index}`}
+                className="bg-white flex justify-between items-center lg:items-end gap-2 w-full p-3 lg:p-4"
+              >
                 <div className="flex flex-col gap-1 lg:gap-2">
                   <span className="text-[11px] text-neutral-400">
                     TRXN-1234
@@ -103,12 +112,20 @@ const TransactionWrapper = (props: Props) => {
             );
           })}
       </div>
-      <Button
-        size={"icon"}
-        className="lg:hidden fixed size-12 z-50 bottom-4 right-4 rounded-full"
-      >
-        <Plus className="text-xl"></Plus>
-      </Button>
+
+      <AudioRecorder
+        maxDuration={30} // Optional: override default 20 seconds
+        onRecordingComplete={() => {}} // Optional: handle completed recording
+      />
+
+      <AudioRecordContainer>
+        <Button
+          size={"icon"}
+          className="lg:hidden fixed size-12 z-50 bottom-4 right-4 rounded-full"
+        >
+          <Plus className="text-xl"></Plus>
+        </Button>
+      </AudioRecordContainer>
     </div>
   );
 };
