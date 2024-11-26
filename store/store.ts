@@ -1,15 +1,15 @@
 import { devtools, persist, subscribeWithSelector } from "zustand/middleware";
 
 import { create } from "zustand";
-import { createJobSlice } from "./job-slice";
+import { createTrxnSlice } from "./trxn-slice";
 import { immer } from "zustand/middleware/immer";
 
 const createStoreSlice = (set: any, get: any, store: any) => ({
-    ...createJobSlice(set, get, store),
+    ...createTrxnSlice(set, get, store),
 });
 
 const createPersistedStoreSlice = (set: any, get: any, store: any) => ({
-    ...createJobSlice(set, get, store),
+    ...createTrxnSlice(set, get, store),
 });
 
 const logger =

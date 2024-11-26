@@ -35,7 +35,7 @@ const handleTransactionTypeFilter = (value: TransactionType[]): TransactionFindM
 
     const type = get(value, "[0]");
 
-    if (type !== "CREDIT" && type !== "DEBIT") {
+    if (type !== TransactionType.CREDIT && type !== TransactionType.DEBIT) {
         return;
     }
 
