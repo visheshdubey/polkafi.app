@@ -1,33 +1,51 @@
 {
-  "name": "polka-fi",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@radix-ui/react-slot": "^1.1.0",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.1",
-    "lucide-react": "^0.460.0",
-    "next": "14.2.16",
-    "react": "^18",
-    "react-dom": "^18",
-    "recharts": "^2.13.3",
-    "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.16",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5"
-  }
+    "name": "polka-fi",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@prisma/client": "^5.22.0",
+        "@radix-ui/react-dialog": "^1.1.2",
+        "@radix-ui/react-icons": "^1.3.2",
+        "@radix-ui/react-popover": "^1.1.2",
+        "@radix-ui/react-select": "^2.1.2",
+        "@radix-ui/react-slot": "^1.1.0",
+        "class-variance-authority": "^0.7.0",
+        "clsx": "^2.1.1",
+        "date-fns": "^3.6.0",
+        "lodash": "^4.17.21",
+        "lucide-react": "^0.460.0",
+        "next": "14.2.16",
+        "next-auth": "^4.24.10",
+        "openai": "^4.73.0",
+        "react": "^18",
+        "react-day-picker": "^8.10.1",
+        "react-dom": "^18",
+        "recharts": "^2.13.3",
+        "tailwind-merge": "^2.5.4",
+        "tailwindcss-animate": "^1.0.7",
+        "vaul": "^1.1.1",
+        "wavesurfer.js": "^7.8.9",
+        "zod": "^3.23.8",
+        "zustand": "^5.0.0-rc.2"
+    },
+    "devDependencies": {
+        "@types/lodash": "^4.17.13",
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "eslint": "^8",
+        "eslint-config-next": "14.2.16",
+        "postcss": "^8",
+        "prettier": "3.3.3",
+        "prisma": "^5.22.0",
+        "tailwind-scrollbar": "^3.1.0",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5"
+    }
 }
