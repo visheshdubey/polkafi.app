@@ -1,6 +1,8 @@
 import { Prisma, Transaction, TransactionType } from "@prisma/client";
+import { jobSchema, openai, prompt } from "@/server/config/open-ai";
 
 import { PaginatedResponse } from "@/lib/types/shared";
+import { Uploadable } from "openai/uploads.mjs";
 import db from "@/server/db/prisma";
 import get from "lodash/get";
 import { isEmpty } from "lodash";
@@ -34,8 +36,6 @@ const handleTransactionTypeFilter = (value: TransactionType[]): TransactionFindM
     const type = get(value, "[0]");
 
     if (type !== "CREDIT" && type !== "DEBIT") {
-        console.log(type);
-
         return;
     }
 
@@ -60,7 +60,7 @@ const handleTransactionCategoryFilter = (value: string): TransactionFindManyWher
             {
                 category: {
                     id: {
-                        equals: value,
+                        equals: get(value, "[0]"),
                     },
                 },
             },
@@ -68,7 +68,7 @@ const handleTransactionCategoryFilter = (value: string): TransactionFindManyWher
     };
 };
 
-export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ userId, searchQueryParams, take = 10 }) => {
+export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ userId, searchQueryParams, take = 2 }) => {
     const where: TransactionFindManyWhere = {
         AND: [
             handleTransactionTypeFilter(searchQueryParams["type"]) || {},
@@ -98,18 +98,71 @@ export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ u
     };
 };
 export const fetchTransactionsById = (userId: string, trxnId: string) => {};
-export const createTransaction = async (userId: string, data: any) =>
-    await db.transaction.create({
+export const createTransactionUsingFormMode = async (userId: string, data: any) => {
+    const category = await db.category.findMany({
+        where: {
+            name: get(data, "category"),
+        },
+    });
+
+    return await db.transaction.create({
         data: {
             particular: get(data, "particular"),
             amount: BigInt(get(data, "amount")),
             type: get(data, "type"),
-            category: get(data, "category"),
+            categoryId: get(category, "[0].id"),
             textToStruturedJsonId: get(data, "textToStruturedJsonId"),
             userId,
             currency: get(data, "currency"),
         },
     });
+};
+
+export const createTransactionUsingTextMode = async (userId: string, data: any) => {
+    // TODO: fetch user categories
+    const openaiRes = (await openai.schemaBasedCompletion({
+        message: get(data, "text"),
+        prompt,
+        schema: jobSchema(["VEHICLE", "FOOD"]),
+    })) as string;
+
+    const parsedOpenAiRes = JSON.parse(openaiRes);
+
+    const textToStruturedJson = await db.textToStruturedJson.create({
+        data: {
+            trxnText: get(data, "text"),
+            transcriptionId: get(data, "transcriptionId"),
+            rawCompletionResponse: openaiRes,
+        },
+    });
+
+    const createTrxnInput = {
+        particular: get(parsedOpenAiRes, "particulars"),
+        amount: BigInt(get(parsedOpenAiRes, "amount")),
+        type: get(parsedOpenAiRes, "type"),
+        category: get(parsedOpenAiRes, "category"),
+        textToStruturedJsonId: textToStruturedJson.id,
+        userId,
+        currency: get(data, "currency"),
+    };
+
+    return await createTransactionUsingFormMode(userId, createTrxnInput);
+};
+
+export const createTransactionUsingAudioMode = async (userId: string, file: Uploadable) => {
+    const openaiRes = await openai.speechToText({ file });
+
+    const transcriptionId = await db.transcription.create({
+        data: {
+            trxnText: get(openaiRes, "text"),
+            rawWhisperResponse: JSON.stringify(openaiRes),
+        },
+    });
+
+    const createTrxnInput = { text: get(openaiRes, "text"), transcriptionId: transcriptionId.id };
+
+    return await createTransactionUsingTextMode(userId, createTrxnInput);
+};
 
 export const updateTransaction = (userId: string, trxnId: string, data: any) => {};
 export const deleteTransaction = (userId: string, trxnId: string) => {};
