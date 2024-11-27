@@ -1,14 +1,10 @@
 "use client";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-import { Button } from "@/components/ui/button";
-import { DynamicBreadcrumb } from "../components/DynamicBreadcrumb";
-import { Input } from "@/components/ui/input";
-import MagicalGradientCard from "../components/MagicalGradientCard";
-import PageTitle from "../components/PageTitle";
-import { Textarea } from "@/components/ui/textarea";
+import CreateTransactionForm from "../forms/create-transaction/CreateTransactionForm";
+import { DynamicBreadcrumb } from "@/features/transaction/components/DynamicBreadcrumb";
+import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
+import PageTitle from "@/features/transaction/components/PageTitle";
+import TransactionAudioRecorder from "@/features/transaction/components/TransactionAudioRecorder";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { z } from "zod";
@@ -55,7 +51,8 @@ const NewTransactionWrapper = (props: Props) => {
         }, 100);
     };
 
-    const onSubmit = () => {};
+    const onSubmit = (values: z.infer<typeof formSchema>) => {};
+
     return (
         <div className="max-w-screen-xl flex flex-col gap-3 lg:gap-6 px-3 lg:px-6 mx-auto w-full min-h-screen">
             <div className="mt-3 lg:mt-12">
@@ -66,100 +63,14 @@ const NewTransactionWrapper = (props: Props) => {
             </div>
             <MagicalGradientCard className="flex flex-col mt-3">
                 <span className="text-purple-800/70 font-medium text-sm">Use voice or text to log transaction</span>
-                <RecordTransactionWidget className="flex flex-row mt-4 mx-auto" />
+                <TransactionAudioRecorder className="flex flex-row mt-4 mx-auto" />
             </MagicalGradientCard>
 
             <MagicalGradientCard className="flex flex-col">
                 <span className="text-purple-800/70 font-medium text-sm">Fill below form to log your transaction</span>
 
                 <div className="w-full shadow-sm min-h-12 bg-white mt-4 lg:p-6 p-4 rounded-xl">
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                            <FormField
-                                control={form.control}
-                                name="particulars"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Particulars</FormLabel>
-                                        <FormControl>
-                                            <Textarea
-                                                placeholder="Tell us a little bit about your transaction"
-                                                className="_resize-none"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 flex-wrap items-center">
-                                <FormField
-                                    control={form.control}
-                                    name="amount"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Amount</FormLabel>
-                                            <FormControl>
-                                                <Input className="w-full" placeholder="Enter amount" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="category"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Category</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select a verified email to display" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                                                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                                                    <SelectItem value="m@support.com">m@support.com</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name="type"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Type</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select a verified email to display" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="m@example.com">m@example.com</SelectItem>
-                                                    <SelectItem value="m@google.com">m@google.com</SelectItem>
-                                                    <SelectItem value="m@support.com">m@support.com</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            <Button type="submit" className="h-10 ml-auto rounded-full w-32 font-medium">
-                                Submit
-                            </Button>
-                        </form>
-                    </Form>
+                    <CreateTransactionForm onSubmit={onSubmit} />
                 </div>
             </MagicalGradientCard>
         </div>
