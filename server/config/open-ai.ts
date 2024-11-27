@@ -26,7 +26,7 @@ export const prompt: PromptArray[] = [
     { role: "user", content: instruction },
 ];
 
-export const jobSchema = (categories: string[]) => {
+export const trxnSchema = (categories: string[]) => {
     return z.object({
         particulars: z.string().optional(),
         amount: z.string().optional(),

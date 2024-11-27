@@ -1,5 +1,5 @@
 import { Prisma, Transaction, TransactionType } from "@prisma/client";
-import { jobSchema, openai, prompt } from "@/server/config/open-ai";
+import { openai, prompt, trxnSchema } from "@/server/config/open-ai";
 
 import { PaginatedResponse } from "@/lib/types/shared";
 import { Uploadable } from "openai/uploads.mjs";
@@ -35,7 +35,7 @@ const handleTransactionTypeFilter = (value: TransactionType[]): TransactionFindM
 
     const type = get(value, "[0]");
 
-    if (type !== "CREDIT" && type !== "DEBIT") {
+    if (type !== TransactionType.CREDIT && type !== TransactionType.DEBIT) {
         return;
     }
 
@@ -123,7 +123,7 @@ export const createTransactionUsingTextMode = async (userId: string, data: any) 
     const openaiRes = (await openai.schemaBasedCompletion({
         message: get(data, "text"),
         prompt,
-        schema: jobSchema(["VEHICLE", "FOOD"]),
+        schema: trxnSchema(["VEHICLE", "FOOD"]),
     })) as string;
 
     const parsedOpenAiRes = JSON.parse(openaiRes);

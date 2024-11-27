@@ -6,17 +6,11 @@ import {
 } from "@/server/db/transactions";
 import { internalServerError, isUserUnauthorized, unauthorized } from "@/lib/utils/default-response";
 
+import { TransactionCreateMode } from "@/lib/entities";
 import { get } from "lodash";
 import { getAuthSession } from "@/features/auth/utils";
 import { queryStringToObject } from "@/lib/utils";
 import { serializeBigIntValues } from "@/lib/utils/bigInt-serializer";
-
-enum TransactionCreateMode {
-    Unknown = 0,
-    Audio,
-    Text,
-    Form,
-}
 
 export const POST = async (req: Request) => {
     try {
