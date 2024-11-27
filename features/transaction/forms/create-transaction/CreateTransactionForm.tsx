@@ -4,18 +4,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { formSchema } from "./schema";
+import { createTrxnFormSchema } from "./schema";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 type Props = {
-    onSubmit: (values: z.infer<typeof formSchema>) => void;
+    onSubmit: (values: z.infer<typeof createTrxnFormSchema>) => void;
 };
 
 const CreateTransactionForm = ({ onSubmit }: Props) => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof createTrxnFormSchema>>({
+        resolver: zodResolver(createTrxnFormSchema),
         defaultValues: {
             particulars: "",
         },
