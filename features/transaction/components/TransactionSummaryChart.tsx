@@ -25,7 +25,7 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-export function Chart() {
+export function TransactionSummaryChart() {
     return (
         <ChartContainer config={chartConfig} className="w-full h-full">
             <BarChart accessibilityLayer data={chartData}>
