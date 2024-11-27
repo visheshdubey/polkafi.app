@@ -54,7 +54,7 @@ const TransactionWrapper = (props: Props) => {
                 <div className="bg-white shadow-sm min-w-[740px] rounded-xl items-center grid-cols-3 grid grow h-44">
                     <KpiCard label="Net PnL" variant="danger" value="$260056" />
                     <KpiCard label="Total Credit" value="$260056" />
-                    <KpiCard label="Total Debit" value="$260" className="border-t" />
+                    <KpiCard label="Total Debit" value="$260" className="border-r-0" />
                 </div>
             </MagicalGradientCard>
 

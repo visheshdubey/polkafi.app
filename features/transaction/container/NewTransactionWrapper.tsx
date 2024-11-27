@@ -8,7 +8,6 @@ import { DynamicBreadcrumb } from "../components/DynamicBreadcrumb";
 import { Input } from "@/components/ui/input";
 import MagicalGradientCard from "../components/MagicalGradientCard";
 import PageTitle from "../components/PageTitle";
-import RecordTransactionWidget from "../components/RecordTransactionWidget";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
