@@ -3,18 +3,32 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
-import { Chart } from "@/features/transaction/components/chart";
 import { DatePickerWithRange } from "@/components/primitives/ui/date-picker-with-range";
 import { DynamicBreadcrumb } from "../components/DynamicBreadcrumb";
-import KpiCard from "@/features/transaction/components/KPICard";
+import KpiCard from "../components/KpiCard";
 import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
 import PageTitle from "@/features/transaction/components/PageTitle";
 import { Plus } from "lucide-react";
 import TransactionListItem from "@/features/transaction/components/TransactionListItem";
+import { TransactionSummaryChart } from "@/features/transaction/components/TransactionSummaryChart";
 import { useFetchInfiniteTrxns } from "@/features/transaction/hooks/useFetchPaginatedTrxns";
 import { useRouter } from "next/navigation";
 
 type Props = {};
+
+const chartData = [
+    { key: "January", debit: 186, credit: 80 },
+    { key: "February", debit: 305, credit: 200 },
+    { key: "March", debit: 237, credit: 120 },
+    { key: "April", debit: 73, credit: 190 },
+    { key: "May", debit: 209, credit: 130 },
+    { key: "June", debit: 214, credit: 140 },
+    { key: "July", debit: 305, credit: 200 },
+    { key: "August", debit: 237, credit: 120 },
+    { key: "September", debit: 73, credit: 190 },
+    { key: "October", debit: 209, credit: 130 },
+    { key: "November", debit: 73, credit: 190 },
+];
 
 const TransactionWrapper = (props: Props) => {
     const { data, isFetching, isPending, fetchNextPage } = useFetchInfiniteTrxns();
@@ -35,12 +49,12 @@ const TransactionWrapper = (props: Props) => {
 
             <MagicalGradientCard className="w-full flex items-center gap-6 overflow-x-auto scrollbar-none rounded-xl">
                 <div className="bg-white shadow-sm w-1/3 min-w-[320px] rounded-xl p-4 grow h-44">
-                    <Chart />
+                    <TransactionSummaryChart data={chartData} />
                 </div>
                 <div className="bg-white shadow-sm min-w-[740px] rounded-xl items-center grid-cols-3 grid grow h-44">
                     <KpiCard label="Net PnL" variant="danger" value="$260056" />
                     <KpiCard label="Total Credit" value="$260056" />
-                    <KpiCard label="Total Debit" value="$260" className="border-t" />
+                    <KpiCard label="Total Debit" value="$260" className="border-r-0" />
                 </div>
             </MagicalGradientCard>
 
@@ -68,7 +82,7 @@ const TransactionWrapper = (props: Props) => {
                     </Select>
                 </div>{" "}
                 <div className="hidden lg:flex items-center gap-3">
-                    <Button onClick={fetchNextPage} size={"sm"} variant={"outline"} className="bg-transparent rounded-full">
+                    <Button onClick={() => fetchNextPage()} size={"sm"} variant={"outline"} className="bg-transparent rounded-full">
                         <Plus /> New Category
                     </Button>
                     {/* <AudioRecordContainer> */}

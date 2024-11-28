@@ -3,7 +3,7 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbS
 import React from "react";
 
 interface BreadcrumbProps {
-    items: { name: string; path: string }[]; // Array of breadcrumb items with name and path
+    items: { name: string; path: string }[];
 }
 
 export function DynamicBreadcrumb({ items }: BreadcrumbProps) {
