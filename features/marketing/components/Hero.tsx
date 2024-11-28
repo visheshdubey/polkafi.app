@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import HeroRecordTransactionWidget from "./HeroRecordTransactionWidget";
+import HeroRecordTransactionWidget from "@/features/marketing/components/HeroRecordTransactionWidget";
 
 type Props = {};
 

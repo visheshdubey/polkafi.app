@@ -5,7 +5,7 @@ type Props = {
 };
 
 const BrandLogo = (props: Props) => {
-    return <span className={cn("text-brand text-base font-semibold", props.className)}>Polka fi.</span>;
+    return <span className={cn("text-brand text-base tracking-tighter font-semibold", props.className)}>Polka fi.</span>;
 };
 
 export default BrandLogo;

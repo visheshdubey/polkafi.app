@@ -25,7 +25,9 @@ const TransactionAiInput = (props: Props) => {
                     </Button>
                 </AudioRecorderWidget>
             </div>
-            <Button className="lg:max-w-[240px] w-full h-10 lg:h-[52px] rounded-full text-sm lg:text-lg font-medium">Analyze</Button>
+            <Button className="lg:max-w-[240px] w-full h-10 lg:h-[52px] rounded-full text-sm lg:text-lg tracking-tight font-medium">
+                Analyze
+            </Button>
         </div>
     );
 };
