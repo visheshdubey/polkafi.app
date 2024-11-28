@@ -1,11 +1,11 @@
 "use client";
 
-import CreateTransactionForm from "../forms/create-transaction/CreateTransactionForm";
+import CreateTransactionForm from "@/features/transaction/forms/create-transaction/CreateTransactionForm";
 import { DynamicBreadcrumb } from "@/features/transaction/components/DynamicBreadcrumb";
 import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
 import PageTitle from "@/features/transaction/components/PageTitle";
-import TransactionAudioRecorder from "@/features/transaction/components/TransactionAudioRecorder";
-import { createTrxnFormSchema } from "../forms/create-transaction/schema";
+import TransactionAiInput from "@/features/transaction/components/TransactionAiInput";
+import { createTrxnFormSchema } from "@/features/transaction/forms/create-transaction/schema";
 import { z } from "zod";
 
 type Props = {};
@@ -28,7 +28,7 @@ const NewTransactionWrapper = (props: Props) => {
             </div>
             <MagicalGradientCard className="flex flex-col mt-3">
                 <span className="text-purple-800/70 font-medium text-sm">Use voice or text to log transaction</span>
-                <TransactionAudioRecorder className="flex flex-row mt-4 mx-auto" />
+                <TransactionAiInput className="flex flex-row mt-4 mx-auto" />
             </MagicalGradientCard>
 
             <MagicalGradientCard className="flex flex-col">

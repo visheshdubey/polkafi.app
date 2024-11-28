@@ -1,9 +1,12 @@
 import "./globals.css";
 
 import AppBar from "@/features/navigation/components/AppBar";
+import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import RootProvider from "@/lib/providers/RootProvider";
 import localFont from "next/font/local";
+
+const inter = Inter({ subsets: ["latin"] });
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -28,7 +31,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <body className={`${inter.className} antialiased`}>
                 <RootProvider>
                     <div className="relative bg-[#FFF6F3] min-h-screen">
                         <div className="max-w-screen-xl sticky z-20 top-0 lg:top-2 mx-auto">
