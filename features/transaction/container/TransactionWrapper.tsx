@@ -4,8 +4,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import { Button } from "@/components/ui/button";
 import { DatePickerWithRange } from "@/components/primitives/ui/date-picker-with-range";
-import { DynamicBreadcrumb } from "../components/DynamicBreadcrumb";
-import KpiCard from "../components/KpiCard";
+import { DynamicBreadcrumb } from "@/features/transaction/components/DynamicBreadcrumb";
+import KpiCard from "@/features/transaction/components/KpiCard";
 import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
 import PageTitle from "@/features/transaction/components/PageTitle";
 import { Plus } from "lucide-react";
@@ -17,17 +17,17 @@ import { useRouter } from "next/navigation";
 type Props = {};
 
 const chartData = [
-    { key: "January", debit: 186, credit: 80 },
-    { key: "February", debit: 305, credit: 200 },
-    { key: "March", debit: 237, credit: 120 },
-    { key: "April", debit: 73, credit: 190 },
+    { key: "Jan", debit: 186, credit: 80 },
+    { key: "Feb", debit: 305, credit: 200 },
+    { key: "Mar", debit: 237, credit: 120 },
+    { key: "Apr", debit: 73, credit: 190 },
     { key: "May", debit: 209, credit: 130 },
-    { key: "June", debit: 214, credit: 140 },
-    { key: "July", debit: 305, credit: 200 },
-    { key: "August", debit: 237, credit: 120 },
-    { key: "September", debit: 73, credit: 190 },
-    { key: "October", debit: 209, credit: 130 },
-    { key: "November", debit: 73, credit: 190 },
+    { key: "Jun", debit: 214, credit: 140 },
+    { key: "Jul", debit: 305, credit: 200 },
+    { key: "Aug", debit: 237, credit: 120 },
+    { key: "Sep", debit: 73, credit: 190 },
+    { key: "Oct", debit: 209, credit: 130 },
+    { key: "Nov", debit: 73, credit: 190 },
 ];
 
 const TransactionWrapper = (props: Props) => {
