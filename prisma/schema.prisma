@@ -28,7 +28,7 @@ model User {
   defaultCurrency String?       @default("USD")
   token           String?
   provider        String?
-  credits         Int           @default(5)
+  credits         Int           @default(20)
   role            UserRole      @default(USER)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
