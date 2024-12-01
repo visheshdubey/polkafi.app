@@ -99,7 +99,7 @@ class APIClient {
 
         if (typeof window === 'undefined' && context) {
             const session = await getSession(context);
-            token = session?.token;
+            token = session?.user?.token;
         }
 
         return this.get({ path: 'user', token }).then(res => {
