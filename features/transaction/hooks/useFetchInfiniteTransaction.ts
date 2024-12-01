@@ -4,7 +4,7 @@ import { debounce, get } from "lodash";
 import { useEffect, useState } from "react";
 
 import { PaginatedResponse } from "@/lib/types/shared";
-import { QueryKey } from "@/lib/api-client/query-keys";
+import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import { Transaction } from "@prisma/client";
 import apiClient from "@/lib/api-client";
 import { mapInfiniteTransactionAPIResToUI } from "../mapper";
@@ -44,7 +44,7 @@ export function useFetchInfiniteTrxns(options: UseFetchInfiniteTrxnsOptions = {}
     }, [filters, debounceMs]);
 
     return useInfiniteQuery({
-        queryKey: [QueryKey.TransactionsList, pageSize, debouncedFilters],
+        queryKey: [QUERY_KEYS.TransactionsList, pageSize, debouncedFilters],
         queryFn: ({ pageParam }) => fetchTransactions({ pageParam, pageSize, filters: debouncedFilters }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.hasMore ? lastPage.nextCursor : undefined,

@@ -3,6 +3,8 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
+import { CategorySelect } from "@/features/category/components/CategorySelect";
+import { CreateCategoryForm } from "@/features/category/components/CreateCategoryForm";
 import { DatePickerWithRange } from "@/components/primitives/ui/date-picker-with-range";
 import { DynamicBreadcrumb } from "@/features/transaction/components/DynamicBreadcrumb";
 import KpiCard from "@/features/transaction/components/KpiCard";
@@ -13,6 +15,7 @@ import TransactionListItem from "../components/TransactionListItem";
 import TransactionListItemSkeleton from "../components/TransactionListItemSkeleton";
 import { TransactionSummaryChart } from "@/features/transaction/components/TransactionSummaryChart";
 import { useEffect } from "react";
+import { useFetchAllCategories } from "@/features/category/hooks/useFetchAllCategories";
 import { useFetchInfiniteTrxns } from "@/features/transaction/hooks/useFetchInfiniteTransaction";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { useRouter } from "next/navigation";
@@ -39,6 +42,7 @@ const TransactionWrapper = (props: Props) => {
         threshold: 0.1,
         enabled: !isFetching && hasNextPage,
     });
+    const { data: categories } = useFetchAllCategories();
     const router = useRouter();
 
     useEffect(() => {
@@ -49,6 +53,10 @@ const TransactionWrapper = (props: Props) => {
     }, [isIntersecting, hasNextPage, fetchNextPage]);
 
     const breadcrumbItems = [{ name: "App", path: "/" }];
+
+    const handleCategorySelect = (label: string) => {
+        console.log("Selected category:", label);
+    };
 
     return (
         <div className="max-w-screen-xl flex flex-col gap-3 lg:gap-6 px-3 lg:px-6 mx-auto w-full min-h-screen">
@@ -74,16 +82,7 @@ const TransactionWrapper = (props: Props) => {
 
             <div className="flex px-3 lg:px-6 items-center justify-between">
                 <div className="items-center flex gap-3 lg:gap-6">
-                    <Select>
-                        <SelectTrigger className="h-8 w-[160px] rounded-full bg-white text-xs ">
-                            <SelectValue placeholder="Select Category" className="text-sm" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="light">Long text long text long text</SelectItem>
-                            <SelectItem value="dark">Dark</SelectItem>
-                            <SelectItem value="system">System</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <CategorySelect className="h-8 w-[160px] rounded-full bg-white text-xs" onSelect={handleCategorySelect} />
 
                     <Select>
                         <SelectTrigger className="h-8 w-[160px] rounded-full bg-white  gap-1 text-xs">
@@ -96,9 +95,11 @@ const TransactionWrapper = (props: Props) => {
                     </Select>
                 </div>{" "}
                 <div className="hidden lg:flex items-center gap-3">
-                    <Button onClick={() => fetchNextPage()} size={"sm"} variant={"outline"} className="bg-transparent rounded-full">
-                        <Plus /> New Category
-                    </Button>
+                    <CreateCategoryForm>
+                        <Button onClick={() => fetchNextPage()} size={"sm"} variant={"outline"} className="bg-transparent rounded-full">
+                            <Plus /> New Category
+                        </Button>
+                    </CreateCategoryForm>
                     {/* <AudioRecordContainer> */}
                     <Button size={"sm"} className="rounded-full" onClick={() => router.push("app/new")}>
                         <Plus /> New Transaction

@@ -2,6 +2,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { ButtonAsync } from "@/components/primitives/ui/button-async";
+import { CategorySelect } from "@/features/category/components/CategorySelect";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TransactionCreateMode } from "@/lib/entities";
@@ -91,20 +92,7 @@ const CreateTransactionForm = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Category</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a category" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="food">Food</SelectItem>
-                                        <SelectItem value="transport">Transport</SelectItem>
-                                        <SelectItem value="entertainment">Entertainment</SelectItem>
-                                        <SelectItem value="utilities">Utilities</SelectItem>
-                                        <SelectItem value="other">Other</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <CategorySelect onSelect={field.onChange} value={field.value} defaultValue={field.value} />
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -116,7 +104,7 @@ const CreateTransactionForm = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Type</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select transaction type" />
