@@ -1,3 +1,5 @@
-export enum QueryKey {
-    TransactionsList = "TransactionsList",
-}
+export const QUERY_KEYS = {
+    TransactionsList: "TransactionsList",
+    CategoriesList: 'categories-list',
+    categories: 'categories',
+} as const;

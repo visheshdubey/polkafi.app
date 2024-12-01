@@ -39,12 +39,15 @@ model User {
 model Category {
   id          String        @id @default(cuid())
   name        String?
+  label       String?       @unique
   user        User?         @relation(fields: [userId], references: [id])
   description String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   userId      String?
   Transaction Transaction[]
+
+  @@index([label])
 }
 
 model Transaction {

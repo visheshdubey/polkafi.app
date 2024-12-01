@@ -1,22 +1,16 @@
-export type TransactionType = "credit" | "debit";
+import { Badge } from "@/components/ui/badge";
+import React from "react";
+import { TransactionListItemType } from "../types";
+import { cn } from "@/lib/utils";
+import { formatCompactNumber } from "@/lib/utils/currency";
 
-export interface TransactionListItemProps {
-    transactionId: string;
-    description: string;
-    amount: number;
-    date: string | Date;
-    category?: string;
-    type?: TransactionType;
+export interface TransactionListItemProps extends TransactionListItemType {
     className?: string;
 }
 
-import { Badge } from "@/components/ui/badge";
-import React from "react";
-import { cn } from "@/lib/utils";
-
 const TransactionListItem: React.FC<TransactionListItemProps> = ({
-    transactionId,
-    description,
+    id: transactionId,
+    particular: description,
     amount,
     date,
     category,
@@ -28,12 +22,7 @@ const TransactionListItem: React.FC<TransactionListItemProps> = ({
     const amountColor = isCredit ? "text-green-700" : "text-red-700";
     const typeColor = isCredit ? "text-green-800 bg-green-600/10" : "text-red-800 bg-red-600/10";
 
-    const formattedAmount = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    }).format(Math.abs(amount));
+    const formattedAmount = `$${formatCompactNumber(Math.abs(Number(amount)))}`;
 
     const formattedDate =
         date instanceof Date

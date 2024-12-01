@@ -1,32 +1,65 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { Button } from "@/components/ui/button";
+import { ButtonAsync } from "@/components/primitives/ui/button-async";
+import { CategorySelect } from "@/features/category/components/CategorySelect";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { TransactionCreateMode } from "@/lib/entities";
 import { createTrxnFormSchema } from "./schema";
+import { useCreateTransaction } from "../../hooks/useCreateTransaction";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useStore } from "@/store/store";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-type Props = {
-    onSubmit: (values: z.infer<typeof createTrxnFormSchema>) => void;
-};
+const CreateTransactionForm = () => {
+    const router = useRouter();
+    const { mutate: createTransaction, isPending } = useCreateTransaction();
+    const { parsedJson } = useStore((state) => state.recorder);
 
-const CreateTransactionForm = ({ onSubmit }: Props) => {
     const form = useForm<z.infer<typeof createTrxnFormSchema>>({
         resolver: zodResolver(createTrxnFormSchema),
         defaultValues: {
-            particulars: "",
+            particular: parsedJson?.particulars,
+            amount: parsedJson?.amount,
+            category: parsedJson?.category,
+            type: parsedJson?.type,
         },
     });
+
+    useEffect(() => {
+        form.reset({
+            particular: parsedJson?.particulars,
+            amount: parsedJson?.amount,
+            category: parsedJson?.category,
+            type: parsedJson?.type,
+        });
+    }, [parsedJson]);
+
+    const onSubmit = (values: z.infer<typeof createTrxnFormSchema>) => {
+        createTransaction(
+            {
+                data: values,
+                mode: TransactionCreateMode.Form,
+            },
+            {
+                onSuccess: () => {
+                    form.reset();
+                    // router.push("/transactions");
+                },
+            },
+        );
+    };
 
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                     control={form.control}
-                    name="particulars"
+                    name="particular"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Particulars</FormLabel>
@@ -59,18 +92,7 @@ const CreateTransactionForm = ({ onSubmit }: Props) => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Category</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a verified email to display" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="m@example.com">m@example.com</SelectItem>
-                                        <SelectItem value="m@google.com">m@google.com</SelectItem>
-                                        <SelectItem value="m@support.com">m@support.com</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <CategorySelect onSelect={field.onChange} value={field.value} defaultValue={field.value} />
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -82,16 +104,15 @@ const CreateTransactionForm = ({ onSubmit }: Props) => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Type</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select a verified email to display" />
+                                            <SelectValue placeholder="Select transaction type" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="m@example.com">m@example.com</SelectItem>
-                                        <SelectItem value="m@google.com">m@google.com</SelectItem>
-                                        <SelectItem value="m@support.com">m@support.com</SelectItem>
+                                        <SelectItem value="DEBIT">Expense</SelectItem>
+                                        <SelectItem value="CREDIT">Income</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -100,9 +121,14 @@ const CreateTransactionForm = ({ onSubmit }: Props) => {
                     />
                 </div>
 
-                <Button type="submit" className="h-10 ml-auto rounded-full w-32 font-medium">
+                <ButtonAsync
+                    type="submit"
+                    className="h-10 ml-auto rounded-full w-32 font-medium"
+                    isLoading={isPending}
+                    loadingText="Submitting..."
+                >
                     Submit
-                </Button>
+                </ButtonAsync>
             </form>
         </Form>
     );

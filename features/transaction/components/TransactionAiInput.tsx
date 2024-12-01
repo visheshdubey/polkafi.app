@@ -1,13 +1,23 @@
+import { useEffect, useState } from "react";
+
 import { AudioRecorderWidget } from "@/features/audio-recorder/components/RecordAudio";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mic } from "lucide-react";
 import { cn } from "@/lib/utils/shadcn";
+import { useStore } from "@/store/store";
 
 type Props = {
     className?: string;
 };
 const TransactionAiInput = (props: Props) => {
+    const { transcribedText } = useStore((state) => state.recorder);
+    const [inputValue, setInputValue] = useState(transcribedText.text);
+
+    useEffect(() => {
+        setInputValue(transcribedText.text);
+    }, [transcribedText.text]);
+
     return (
         <div className={cn("flex-wrap lg:flex-nowrap items-center z-10 w-full gap-2.5 flex", props.className)}>
             <div className="relative bg-white w-full items-center flex rounded-full border-[#7D42FB] border lg:border-2">
@@ -15,6 +25,8 @@ const TransactionAiInput = (props: Props) => {
                     placeholder="Spent 12000 dollars on cat food"
                     className="w-full h-9 text-sm lg:h-12 lg:text-base pl-6 border-0 ring-0 focus-visible:ring-0 _placeholder:italic"
                     type="text"
+                    onChange={(e) => setInputValue(e.target.value)}
+                    value={inputValue}
                 />
                 <AudioRecorderWidget>
                     <Button

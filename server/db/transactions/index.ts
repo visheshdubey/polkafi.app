@@ -68,7 +68,7 @@ const handleTransactionCategoryFilter = (value: string): TransactionFindManyWher
     };
 };
 
-export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ userId, searchQueryParams, take = 2 }) => {
+export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ userId, searchQueryParams, take = 5 }) => {
     const where: TransactionFindManyWhere = {
         AND: [
             handleTransactionTypeFilter(searchQueryParams["type"]) || {},
@@ -97,7 +97,7 @@ export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ u
         total: totalItemsInDb,
     };
 };
-export const fetchTransactionsById = (userId: string, trxnId: string) => {};
+export const fetchTransactionsById = (userId: string, trxnId: string) => { };
 export const createTransactionUsingFormMode = async (userId: string, data: any) => {
     const category = await db.category.findMany({
         where: {
@@ -164,8 +164,8 @@ export const createTransactionUsingAudioMode = async (userId: string, file: Uplo
     return await createTransactionUsingTextMode(userId, createTrxnInput);
 };
 
-export const updateTransaction = (userId: string, trxnId: string, data: any) => {};
-export const deleteTransaction = (userId: string, trxnId: string) => {};
+export const updateTransaction = (userId: string, trxnId: string, data: any) => { };
+export const deleteTransaction = (userId: string, trxnId: string) => { };
 
 export const createTranscription = async (userId: string, data: any) =>
     await db.transcription.create({
