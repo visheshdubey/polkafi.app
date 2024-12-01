@@ -7,21 +7,17 @@ const Waveform = ({ barCount = 40, height = "50px", isPlaying = false, minHeight
     const animationFramesRef = useRef<number[]>([]);
     const timeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
-    // Cleanup function to cancel all animations
     const cleanupAnimations = () => {
-        // Cancel all animation frames
         animationFramesRef.current.forEach((frameId) => {
             cancelAnimationFrame(frameId);
         });
         animationFramesRef.current = [];
 
-        // Clear all timeouts
         timeoutsRef.current.forEach((timeoutId) => {
             clearTimeout(timeoutId);
         });
         timeoutsRef.current = [];
 
-        // Reset all bars to initial state
         barsRef.current.forEach((bar) => {
             if (bar) {
                 bar.style.transform = "scaleY(0.2)";
@@ -39,7 +35,6 @@ const Waveform = ({ barCount = 40, height = "50px", isPlaying = false, minHeight
             cleanupAnimations();
         }
 
-        // Cleanup on unmount or when isPlaying changes
         return () => {
             cleanupAnimations();
         };
