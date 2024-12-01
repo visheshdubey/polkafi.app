@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
+import { RecordingState } from "./record-audio";
+
 interface UseAudioRecorderProps {
     maxDuration: number;
     onComplete?: (blob: Blob | null) => void;
     onRecChange?: (state: Boolean) => void;
+    onStateChange?: (state: RecordingState) => void;
 }
 
 interface UseAudioRecorderReturn {
@@ -13,11 +16,12 @@ interface UseAudioRecorderReturn {
     startRecording: () => Promise<void>;
     stopRecording: () => void;
     resetRecording: () => void;
+    discardRecording: () => void;
     error: string | null;
     hasPermission: boolean;
 }
 
-export function useAudioRecorder({ maxDuration, onComplete, onRecChange }: UseAudioRecorderProps): UseAudioRecorderReturn {
+export function useAudioRecorder({ maxDuration, onComplete, onRecChange, onStateChange }: UseAudioRecorderProps): UseAudioRecorderReturn {
     const [isRecording, setIsRecording] = useState(false);
     const [timeLeft, setTimeLeft] = useState(maxDuration);
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -40,6 +44,12 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange }: UseAu
             }
         };
     }, []);
+
+    useEffect(() => {
+        if (timeLeft === 0) {
+            stopRecording();
+        }
+    }, [timeLeft]);
 
     //TODO: Investigate
     useEffect(() => {
@@ -90,6 +100,7 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange }: UseAu
             mediaRecorderRef.current.start();
             setIsRecording(true);
             onRecChange?.(true);
+            onStateChange?.("recording");
 
             // Start timer
             timerRef.current = setInterval(() => {
@@ -104,6 +115,7 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange }: UseAu
             }, 1000);
         } catch (err) {
             setError("Failed to start recording");
+            onStateChange?.("idle");
         }
     };
 
@@ -112,9 +124,11 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange }: UseAu
             mediaRecorderRef.current.stop();
             onRecChange?.(false);
             setIsRecording(false);
+            onStateChange?.("stopped");
 
             if (timerRef.current) {
                 clearInterval(timerRef.current);
+                setTimeLeft(0);
             }
         }
     };
@@ -123,6 +137,14 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange }: UseAu
         setAudioBlob(null);
         setTimeLeft(maxDuration);
         setError(null);
+        onStateChange?.("idle");
+    };
+
+    const discardRecording = () => {
+        setAudioBlob(null);
+        setTimeLeft(maxDuration);
+        setError(null);
+        onStateChange?.("idle");
     };
 
     return {
@@ -132,6 +154,7 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange }: UseAu
         startRecording,
         stopRecording,
         resetRecording,
+        discardRecording,
         error,
         hasPermission,
     };

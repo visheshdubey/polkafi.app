@@ -20,6 +20,7 @@ interface RecorderContextValue {
     startRecording: () => Promise<void>;
     stopRecording: () => void;
     resetRecording: () => void;
+    discardRecording: () => void;
     error: string | null;
     hasPermission: boolean;
 }
@@ -34,20 +35,39 @@ function useRecorder() {
     return context;
 }
 
+export type RecordingState = "idle" | "recording" | "stopped" | "completed";
+
 interface RecorderProps extends React.HTMLAttributes<HTMLDivElement> {
     maxDuration: number;
     onComplete?: (blob: Blob | null) => void;
     onRecChange?: (state: Boolean) => void;
     asChild?: boolean;
+    recordingState?: RecordingState;
+    onStateChange?: (state: RecordingState) => void;
 }
 
-function Recorder({ maxDuration, onComplete, onRecChange, children, asChild, className, ...props }: RecorderProps) {
+function Recorder({
+    maxDuration,
+    onComplete,
+    onRecChange,
+    children,
+    asChild,
+    className,
+    recordingState = "idle",
+    onStateChange,
+    ...props
+}: RecorderProps) {
     const Comp = asChild ? Slot : "div";
-    const recorder = useAudioRecorder({ maxDuration, onComplete, onRecChange });
+    const recorder = useAudioRecorder({
+        maxDuration,
+        onComplete,
+        onRecChange,
+        onStateChange,
+    });
 
     return (
         <RecorderContext.Provider value={recorder}>
-            <Comp className={cn("relative", className)} {...props}>
+            <Comp className={cn("relative", className)} data-state={recordingState} {...props}>
                 {children}
             </Comp>
         </RecorderContext.Provider>
@@ -143,4 +163,15 @@ function RecorderError({ className, asChild = false, ...props }: RecorderErrorPr
     );
 }
 
-export { Recorder, RecorderTrigger, RecorderWaveform, RecorderReset, RecorderTime, RecorderError, useRecorder };
+interface RecorderDiscardProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    asChild?: boolean;
+}
+
+function RecorderDiscard({ className, asChild = false, ...props }: RecorderDiscardProps) {
+    const { discardRecording, audioBlob, isRecording } = useRecorder();
+    const Comp = asChild ? Slot : "button";
+
+    return <Comp className={cn("inline-flex items-center justify-center rounded-md", className)} onClick={discardRecording} {...props} />;
+}
+
+export { Recorder, RecorderTrigger, RecorderWaveform, RecorderReset, RecorderTime, RecorderError, RecorderDiscard, useRecorder };
