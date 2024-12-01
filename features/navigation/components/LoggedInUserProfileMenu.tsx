@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
@@ -7,9 +9,14 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
 type Props = {};
 
 const ProfileMenu = (props: Props) => {
+    const router = useRouter();
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
@@ -19,13 +26,12 @@ const ProfileMenu = (props: Props) => {
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-                <DropdownMenuItem>My Account</DropdownMenuItem>
-                <DropdownMenuItem>Preferences</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push("/settings")}>My Account</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push("/settings")}>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Update Categories</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push("/settings")}>Request credits</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Request credits</DropdownMenuItem>
-                <DropdownMenuItem>Log Out</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>Log Out</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );
