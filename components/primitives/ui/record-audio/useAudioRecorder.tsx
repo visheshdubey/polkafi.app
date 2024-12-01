@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from "react";
 
 import { RecordingState } from "./record-audio";
 
+type AudioRecorderError = string | null;
+
 interface UseAudioRecorderProps {
     maxDuration: number;
     onComplete?: (blob: Blob | null) => void;
-    onRecChange?: (state: Boolean) => void;
+    onRecChange?: (state: boolean) => void;
     onStateChange?: (state: RecordingState) => void;
 }
 
@@ -17,7 +19,7 @@ interface UseAudioRecorderReturn {
     stopRecording: () => void;
     resetRecording: () => void;
     discardRecording: () => void;
-    error: string | null;
+    error: AudioRecorderError;
     hasPermission: boolean;
 }
 
@@ -25,7 +27,7 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange, onState
     const [isRecording, setIsRecording] = useState(false);
     const [timeLeft, setTimeLeft] = useState(maxDuration);
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<AudioRecorderError>(null);
     const [hasPermission, setHasPermission] = useState(false);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -33,30 +35,35 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange, onState
     const chunksRef = useRef<Blob[]>([]);
     const timerRef = useRef<NodeJS.Timeout>();
 
+    const cleanup = () => {
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+            streamRef.current = null;
+        }
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = undefined;
+        }
+        mediaRecorderRef.current = null;
+        chunksRef.current = [];
+    };
+
     useEffect(() => {
         requestPermission();
-        return () => {
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach((track) => track.stop());
-            }
-            if (timerRef.current) {
-                clearInterval(timerRef.current);
-            }
-        };
+        return cleanup;
     }, []);
 
     useEffect(() => {
-        if (timeLeft === 0) {
+        if (timeLeft === 0 && isRecording) {
             stopRecording();
         }
     }, [timeLeft]);
 
-    //TODO: Investigate
     useEffect(() => {
         if (!isRecording && audioBlob) {
             onComplete?.(audioBlob);
         }
-    }, [isRecording, audioBlob]);
+    }, [isRecording, audioBlob, onComplete]);
 
     const requestPermission = async () => {
         try {
@@ -91,8 +98,6 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange, onState
 
             mediaRecorderRef.current.onstop = () => {
                 const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-                console.log(123);
-
                 setAudioBlob(blob);
             };
 
@@ -102,12 +107,10 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange, onState
             onRecChange?.(true);
             onStateChange?.("recording");
 
-            // Start timer
             timerRef.current = setInterval(() => {
                 setTimeLeft((prev) => {
                     if (prev <= 1) {
                         stopRecording();
-
                         return 0;
                     }
                     return prev - 1;
@@ -120,7 +123,7 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange, onState
     };
 
     const stopRecording = () => {
-        if (mediaRecorderRef.current && isRecording) {
+        if (mediaRecorderRef.current?.state === "recording") {
             mediaRecorderRef.current.stop();
             onRecChange?.(false);
             setIsRecording(false);
@@ -128,24 +131,20 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange, onState
 
             if (timerRef.current) {
                 clearInterval(timerRef.current);
-                setTimeLeft(0);
+                timerRef.current = undefined;
             }
         }
     };
 
-    const resetRecording = () => {
+    const resetState = () => {
         setAudioBlob(null);
         setTimeLeft(maxDuration);
         setError(null);
         onStateChange?.("idle");
     };
 
-    const discardRecording = () => {
-        setAudioBlob(null);
-        setTimeLeft(maxDuration);
-        setError(null);
-        onStateChange?.("idle");
-    };
+    const resetRecording = resetState;
+    const discardRecording = resetState;
 
     return {
         isRecording,
