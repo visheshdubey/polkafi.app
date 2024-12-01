@@ -1,11 +1,13 @@
 import { devtools, persist, subscribeWithSelector } from "zustand/middleware";
 
 import { create } from "zustand";
+import { createRecorderSlice } from "./recorder-slice";
 import { createTrxnSlice } from "./trxn-slice";
 import { immer } from "zustand/middleware/immer";
 
 const createStoreSlice = (set: any, get: any, store: any) => ({
     ...createTrxnSlice(set, get, store),
+    ...createRecorderSlice(set, get, store),
 });
 
 const createPersistedStoreSlice = (set: any, get: any, store: any) => ({
@@ -14,16 +16,16 @@ const createPersistedStoreSlice = (set: any, get: any, store: any) => ({
 
 const logger =
     (config: any, { name }: { name?: string }) =>
-    (set: any, get: any, api: any) =>
-        config(
-            (args: any) => {
-                // console.log(`--- ${name} prev:`, get());
-                set(args);
-                console.log(`+++ ${name} next:`, get());
-            },
-            get,
-            api,
-        );
+        (set: any, get: any, api: any) =>
+            config(
+                (args: any) => {
+                    // console.log(`--- ${name} prev:`, get());
+                    set(args);
+                    console.log(`+++ ${name} next:`, get());
+                },
+                get,
+                api,
+            );
 
 export const useStore = create<Store>()(
     devtools(

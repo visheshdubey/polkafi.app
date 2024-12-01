@@ -7,24 +7,36 @@ import { Textarea } from "@/components/ui/textarea";
 import { TransactionCreateMode } from "@/lib/entities";
 import { createTrxnFormSchema } from "./schema";
 import { useCreateTransaction } from "../../hooks/useCreateTransaction";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { useStore } from "@/store/store";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const CreateTransactionForm = () => {
     const router = useRouter();
     const { mutate: createTransaction, isPending } = useCreateTransaction();
+    const { parsedJson } = useStore((state) => state.recorder);
 
     const form = useForm<z.infer<typeof createTrxnFormSchema>>({
         resolver: zodResolver(createTrxnFormSchema),
         defaultValues: {
-            particular: "",
-            amount: "",
-            category: "",
-            type: "",
+            particular: parsedJson?.particulars,
+            amount: parsedJson?.amount,
+            category: parsedJson?.category,
+            type: parsedJson?.type,
         },
     });
+
+    useEffect(() => {
+        form.reset({
+            particular: parsedJson?.particulars,
+            amount: parsedJson?.amount,
+            category: parsedJson?.category,
+            type: parsedJson?.type,
+        });
+    }, [parsedJson]);
 
     const onSubmit = (values: z.infer<typeof createTrxnFormSchema>) => {
         createTransaction(
@@ -35,7 +47,7 @@ const CreateTransactionForm = () => {
             {
                 onSuccess: () => {
                     form.reset();
-                    // router.push("/transactions"); // or wherever you want to redirect
+                    // router.push("/transactions");
                 },
             },
         );

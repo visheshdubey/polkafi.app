@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ButtonAsync } from "@/components/primitives/ui/button-async";
 import { useSpeechToText } from "../hooks/useSpeechToText";
+import { useStore } from "@/store/store";
 import { useTextToJson } from "../hooks/useTextToJson";
 
 interface AudioRecorderWidgetProps {
@@ -81,7 +82,7 @@ const RecorderControls = ({
 
 const TranscriptionDisplay = ({ transcribedText }: { transcribedText: TranscribedText | null }) => (
     <>
-        {transcribedText ? (
+        {transcribedText?.text ? (
             <span className="text-center h-[50px] text-sm text-neutral-500 font-medium">{transcribedText.text}</span>
         ) : (
             <RecorderWaveform className="flex-1" barCount={60} />
@@ -90,25 +91,25 @@ const TranscriptionDisplay = ({ transcribedText }: { transcribedText: Transcribe
 );
 
 export function AudioRecorderWidget({ children }: AudioRecorderWidgetProps) {
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [audioBlob, setAudioBlob] = useState<Blob | null>();
-    const [transcribedText, setTranscribedText] = useState<TranscribedText | null>(null);
     const [recordingState, setRecordingState] = useState<RecordingState>("idle");
+    const { updateTranscribedText, transcribedText, parsedJson, updateParsedJson } = useStore((state) => state.recorder);
 
-    // API hooks
     const { mutate: transcribeAudio, isPending } = useSpeechToText({
         onSuccess(text) {
-            setTranscribedText(text);
-            console.log(text);
+            updateTranscribedText(text);
         },
     });
 
     const { mutate: convertTextToJson, isPending: isConvertingTextToJson } = useTextToJson({
         onSuccess(data) {
             console.log(data);
+            updateParsedJson(data);
+            setIsDrawerOpen(false);
         },
     });
 
-    // Event handlers
     const handleComplete = async (blob: Blob | null) => {
         setAudioBlob(blob);
 
@@ -125,13 +126,15 @@ export function AudioRecorderWidget({ children }: AudioRecorderWidgetProps) {
     };
 
     const handleDiscard = () => {
-        setTranscribedText(null);
+        updateTranscribedText({ text: "" });
         setRecordingState("idle");
     };
 
     return (
-        <Drawer>
-            <DrawerTrigger asChild>{children}</DrawerTrigger>
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+            <DrawerTrigger asChild onClick={() => setIsDrawerOpen(true)}>
+                {children}
+            </DrawerTrigger>
             <DrawerContent>
                 <div className="mx-auto w-full max-w-sm">
                     <DrawerHeader className="justify-center mt-2">
