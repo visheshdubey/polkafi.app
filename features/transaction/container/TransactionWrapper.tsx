@@ -22,20 +22,6 @@ import { useRouter } from "next/navigation";
 
 type Props = {};
 
-const chartData = [
-    { key: "Jan", debit: 186, credit: 80 },
-    { key: "Feb", debit: 305, credit: 200 },
-    { key: "Mar", debit: 237, credit: 120 },
-    { key: "Apr", debit: 73, credit: 190 },
-    { key: "May", debit: 209, credit: 130 },
-    { key: "Jun", debit: 214, credit: 140 },
-    { key: "Jul", debit: 305, credit: 200 },
-    { key: "Aug", debit: 237, credit: 120 },
-    { key: "Sep", debit: 73, credit: 190 },
-    { key: "Oct", debit: 209, credit: 130 },
-    { key: "Nov", debit: 73, credit: 190 },
-];
-
 const TransactionWrapper = (props: Props) => {
     const { data, isFetching, isPending, fetchNextPage, hasNextPage } = useFetchInfiniteTrxns();
     const { targetRef, isIntersecting } = useIntersectionObserver({
