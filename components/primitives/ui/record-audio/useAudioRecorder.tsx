@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { RecordingState } from "./record-audio";
+import { tick } from "@/lib/utils/tick";
 
 type AudioRecorderError = string | null;
 
@@ -63,7 +64,7 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange, onState
         if (!isRecording && audioBlob) {
             onComplete?.(audioBlob);
         }
-    }, [isRecording, audioBlob, onComplete]);
+    }, [isRecording, audioBlob]);
 
     const requestPermission = async () => {
         try {
@@ -127,7 +128,10 @@ export function useAudioRecorder({ maxDuration, onComplete, onRecChange, onState
             mediaRecorderRef.current.stop();
             onRecChange?.(false);
             setIsRecording(false);
-            onStateChange?.("stopped");
+
+            tick(() => {
+                onStateChange?.("stopped");
+            });
 
             if (timerRef.current) {
                 clearInterval(timerRef.current);
