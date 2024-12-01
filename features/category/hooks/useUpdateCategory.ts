@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import apiClient from "@/lib/api-client";
+import { toast } from "sonner";
 
 interface UpdateCategoryData {
     id: string;
@@ -26,6 +27,10 @@ export const useUpdateCategory = () => {
         mutationFn: updateCategory,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CategoriesList] });
+            toast.success("Category updated successfully");
+        },
+        onError: (error) => {
+            toast.error("Failed to update category");
         },
     });
 };

@@ -1,5 +1,6 @@
 import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import apiClient from "@/lib/api-client";
+import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 
 interface Category {
@@ -16,8 +17,18 @@ const fetchCategories = async (): Promise<Category[]> => {
 };
 
 export const useFetchAllCategories = () => {
-    return useQuery({
+    const query = useQuery({
         queryKey: [QUERY_KEYS.CategoriesList],
         queryFn: fetchCategories,
     });
+
+    const { error } = query;
+
+    if (error) {
+        toast.error("Failed to fetch categories", {
+            description: error.message || "Please try again later",
+        });
+    }
+
+    return query;
 }; 

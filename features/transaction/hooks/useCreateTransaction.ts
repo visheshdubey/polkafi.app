@@ -4,6 +4,7 @@ import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import { Transaction } from "@prisma/client";
 import { TransactionCreateMode } from "@/lib/entities";
 import apiClient from "@/lib/api-client";
+import { toast } from "sonner";
 
 interface CreateTransactionParams {
     data: any;
@@ -25,8 +26,11 @@ export function useCreateTransaction() {
     return useMutation({
         mutationFn: createTransaction,
         onSuccess: () => {
-            // Invalidate the transactions list query to refetch with new data
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.TransactionsList] });
+            toast.success("Transaction created successfully");
+        },
+        onError: (error) => {
+            toast.error("Failed to create transaction");
         },
     });
 } 

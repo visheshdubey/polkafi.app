@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import apiClient from "@/lib/api-client";
+import { toast } from "sonner";
 
 interface UpdateProfileData {
     name: string;
@@ -24,6 +25,10 @@ export const useUpdateProfileDetails = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.Profile] });
+            toast.success("Profile updated successfully");
+        },
+        onError: (error) => {
+            toast.error(error.message || "Failed to update profile");
         },
     });
 };
