@@ -14,8 +14,8 @@ import { Plus } from "lucide-react";
 import TransactionListItem from "../components/TransactionListItem";
 import TransactionListItemSkeleton from "../components/TransactionListItemSkeleton";
 import { TransactionSummaryChart } from "@/features/transaction/components/TransactionSummaryChart";
+import { useDashboardStats } from "../hooks/useDashboardStats";
 import { useEffect } from "react";
-import { useFetchAllCategories } from "@/features/category/hooks/useFetchAllCategories";
 import { useFetchInfiniteTrxns } from "@/features/transaction/hooks/useFetchInfiniteTransaction";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { useRouter } from "next/navigation";
@@ -42,7 +42,7 @@ const TransactionWrapper = (props: Props) => {
         threshold: 0.1,
         enabled: !isFetching && hasNextPage,
     });
-    const { data: categories } = useFetchAllCategories();
+    const { data: dashboardStats } = useDashboardStats(365);
     const router = useRouter();
 
     useEffect(() => {
@@ -71,12 +71,12 @@ const TransactionWrapper = (props: Props) => {
 
             <MagicalGradientCard className="w-full flex items-center gap-6 overflow-x-auto scrollbar-none rounded-xl">
                 <div className="bg-white shadow-sm w-1/3 min-w-[320px] rounded-xl p-4 grow h-44">
-                    <TransactionSummaryChart data={chartData} />
+                    <TransactionSummaryChart data={dashboardStats?.charts} />
                 </div>
                 <div className="bg-white shadow-sm min-w-[740px] rounded-xl items-center grid-cols-3 grid grow h-44">
-                    <KpiCard label="Net PnL" variant="danger" value={"272065"} />
-                    <KpiCard label="Total Credit" value={"0003399"} />
-                    <KpiCard label="Total Debit" value={"9654255"} className="border-r-0" />
+                    <KpiCard label="Net PnL" variant="danger" value={dashboardStats?.netPnl} />
+                    <KpiCard label="Total Credit" value={dashboardStats?.totalCredit} />
+                    <KpiCard label="Total Debit" value={dashboardStats?.totalDebit} className="border-r-0" />
                 </div>
             </MagicalGradientCard>
 
@@ -100,11 +100,9 @@ const TransactionWrapper = (props: Props) => {
                             <Plus /> New Category
                         </Button>
                     </CreateCategoryForm>
-                    {/* <AudioRecordContainer> */}
                     <Button size={"sm"} className="rounded-full" onClick={() => router.push("app/new")}>
                         <Plus /> New Transaction
                     </Button>
-                    {/* </AudioRecordContainer> */}
                 </div>
             </div>
             <MagicalGradientCard>
@@ -126,16 +124,13 @@ const TransactionWrapper = (props: Props) => {
                 <div className="size-20" ref={targetRef}></div>
             </MagicalGradientCard>
 
-            {/* <AudioRecorder
-                maxDuration={30} // Optional: override default 20 seconds
-                onRecordingComplete={() => {}} // Optional: handle completed recording
-            />
-
-            <AudioRecordContainer>
-                <Button size={"icon"} className="lg:hidden fixed size-12 z-50 bottom-4 right-4 rounded-full">
-                    <Plus className="text-xl"></Plus>
-                </Button>
-            </AudioRecordContainer> */}
+            <Button
+                onClick={() => router.push("app/new")}
+                size={"icon"}
+                className="lg:hidden fixed size-12 z-50 bottom-4 right-4 rounded-full"
+            >
+                <Plus className="text-xl"></Plus>
+            </Button>
         </div>
     );
 };

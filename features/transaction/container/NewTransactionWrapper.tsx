@@ -1,12 +1,9 @@
 "use client";
-
 import CreateTransactionForm from "@/features/transaction/forms/create-transaction/CreateTransactionForm";
 import { DynamicBreadcrumb } from "@/features/transaction/components/DynamicBreadcrumb";
 import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
 import PageTitle from "@/features/transaction/components/PageTitle";
 import TransactionAiInput from "@/features/transaction/components/TransactionAiInput";
-import { createTrxnFormSchema } from "@/features/transaction/forms/create-transaction/schema";
-import { z } from "zod";
 
 type Props = {};
 
@@ -15,9 +12,6 @@ const NewTransactionWrapper = (props: Props) => {
         { name: "App", path: "/" },
         { name: "New Transaction", path: "/docs/components" },
     ];
-
-    const onSubmit = (values: z.infer<typeof createTrxnFormSchema>) => {};
-
     return (
         <div className="max-w-screen-xl flex flex-col gap-3 lg:gap-6 px-3 lg:px-6 mx-auto w-full min-h-screen">
             <div className="mt-3 lg:mt-12">
@@ -35,7 +29,7 @@ const NewTransactionWrapper = (props: Props) => {
                 <span className="text-purple-800/70 font-medium text-sm">Fill below form to log your transaction</span>
 
                 <div className="w-full shadow-sm min-h-12 bg-white mt-4 lg:p-6 p-4 rounded-xl">
-                    <CreateTransactionForm onSubmit={onSubmit} />
+                    <CreateTransactionForm />
                 </div>
             </MagicalGradientCard>
         </div>
