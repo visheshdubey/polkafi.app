@@ -4,29 +4,50 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { TransactionCreateMode } from "@/lib/entities";
 import { createTrxnFormSchema } from "./schema";
+import { useCreateTransaction } from "../../hooks/useCreateTransaction";
 import { useForm } from "react-hook-form";
+import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-type Props = {
-    onSubmit: (values: z.infer<typeof createTrxnFormSchema>) => void;
-};
+const CreateTransactionForm = () => {
+    const router = useRouter();
+    const { mutate: createTransaction, isPending } = useCreateTransaction();
 
-const CreateTransactionForm = ({ onSubmit }: Props) => {
     const form = useForm<z.infer<typeof createTrxnFormSchema>>({
         resolver: zodResolver(createTrxnFormSchema),
         defaultValues: {
-            particulars: "",
+            particular: "",
+            amount: "",
+            category: "",
+            type: "",
         },
     });
+
+    const onSubmit = (values: z.infer<typeof createTrxnFormSchema>) => {
+        createTransaction(
+            {
+                data: values,
+                mode: TransactionCreateMode.Form,
+            },
+            {
+                onSuccess: () => {
+                    form.reset();
+                    // router.push("/transactions"); // or wherever you want to redirect
+                },
+            },
+        );
+    };
 
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                     control={form.control}
-                    name="particulars"
+                    name="particular"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Particulars</FormLabel>
@@ -62,13 +83,15 @@ const CreateTransactionForm = ({ onSubmit }: Props) => {
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select a verified email to display" />
+                                            <SelectValue placeholder="Select a category" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="m@example.com">m@example.com</SelectItem>
-                                        <SelectItem value="m@google.com">m@google.com</SelectItem>
-                                        <SelectItem value="m@support.com">m@support.com</SelectItem>
+                                        <SelectItem value="food">Food</SelectItem>
+                                        <SelectItem value="transport">Transport</SelectItem>
+                                        <SelectItem value="entertainment">Entertainment</SelectItem>
+                                        <SelectItem value="utilities">Utilities</SelectItem>
+                                        <SelectItem value="other">Other</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -85,13 +108,12 @@ const CreateTransactionForm = ({ onSubmit }: Props) => {
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select a verified email to display" />
+                                            <SelectValue placeholder="Select transaction type" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="m@example.com">m@example.com</SelectItem>
-                                        <SelectItem value="m@google.com">m@google.com</SelectItem>
-                                        <SelectItem value="m@support.com">m@support.com</SelectItem>
+                                        <SelectItem value="DEBIT">Expense</SelectItem>
+                                        <SelectItem value="CREDIT">Income</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -100,8 +122,8 @@ const CreateTransactionForm = ({ onSubmit }: Props) => {
                     />
                 </div>
 
-                <Button type="submit" className="h-10 ml-auto rounded-full w-32 font-medium">
-                    Submit
+                <Button type="submit" className="h-10 ml-auto rounded-full w-32 font-medium" disabled={isPending}>
+                    {isPending ? "Submitting..." : "Submit"}
                 </Button>
             </form>
         </Form>

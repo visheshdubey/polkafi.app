@@ -9,9 +9,12 @@ import KpiCard from "@/features/transaction/components/KpiCard";
 import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
 import PageTitle from "@/features/transaction/components/PageTitle";
 import { Plus } from "lucide-react";
-import TransactionListItem from "@/features/transaction/components/TransactionListItem";
+import TransactionListItem from "../components/TransactionListItem";
+import TransactionListItemSkeleton from "../components/TransactionListItemSkeleton";
 import { TransactionSummaryChart } from "@/features/transaction/components/TransactionSummaryChart";
-import { useFetchInfiniteTrxns } from "@/features/transaction/hooks/useFetchPaginatedTrxns";
+import { useEffect } from "react";
+import { useFetchInfiniteTrxns } from "@/features/transaction/hooks/useFetchInfiniteTransaction";
+import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { useRouter } from "next/navigation";
 
 type Props = {};
@@ -31,8 +34,19 @@ const chartData = [
 ];
 
 const TransactionWrapper = (props: Props) => {
-    const { data, isFetching, isPending, fetchNextPage } = useFetchInfiniteTrxns();
+    const { data, isFetching, isPending, fetchNextPage, hasNextPage } = useFetchInfiniteTrxns();
+    const { targetRef, isIntersecting } = useIntersectionObserver({
+        threshold: 0.1,
+        enabled: !isFetching && hasNextPage,
+    });
     const router = useRouter();
+
+    useEffect(() => {
+        if (isIntersecting && hasNextPage) {
+            fetchNextPage();
+            console.log("fetching next page");
+        }
+    }, [isIntersecting, hasNextPage, fetchNextPage]);
 
     const breadcrumbItems = [{ name: "App", path: "/" }];
 
@@ -52,9 +66,9 @@ const TransactionWrapper = (props: Props) => {
                     <TransactionSummaryChart data={chartData} />
                 </div>
                 <div className="bg-white shadow-sm min-w-[740px] rounded-xl items-center grid-cols-3 grid grow h-44">
-                    <KpiCard label="Net PnL" variant="danger" value="$260056" />
-                    <KpiCard label="Total Credit" value="$260056" />
-                    <KpiCard label="Total Debit" value="$260" className="border-r-0" />
+                    <KpiCard label="Net PnL" variant="danger" value={"272065"} />
+                    <KpiCard label="Total Credit" value={"0003399"} />
+                    <KpiCard label="Total Debit" value={"9654255"} className="border-r-0" />
                 </div>
             </MagicalGradientCard>
 
@@ -94,19 +108,21 @@ const TransactionWrapper = (props: Props) => {
             </div>
             <MagicalGradientCard>
                 <div className="w-full shadow-sm flex flex-col *:border-b *:border-neutral-100 last-of-type:border-b-0 rounded-xl overflow-hidden bg-white">
-                    {Array(1200)
-                        .fill({
-                            transactionId: "TRXN-1234",
-                            description: "Purchased a car for 10000rs",
-                            amount: 20456,
-                            date: "2024-11-24",
-                            category: "Vehicle",
-                            type: "credit" as const,
-                        })
-                        .map((item, index) => {
+                    {data &&
+                        data.transactions.map((item, index) => {
                             return <TransactionListItem key={`tansaction-list-item-${index}`} {...item} />;
                         })}
                 </div>
+                {isFetching ? (
+                    <>
+                        <TransactionListItemSkeleton />
+                        <TransactionListItemSkeleton />
+                        <TransactionListItemSkeleton />
+                    </>
+                ) : (
+                    <></>
+                )}
+                <div className="size-20" ref={targetRef}></div>
             </MagicalGradientCard>
 
             {/* <AudioRecorder

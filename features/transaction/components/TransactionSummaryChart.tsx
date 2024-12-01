@@ -1,6 +1,7 @@
 "use client";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { TransactionSummaryData } from "../types";
 
 const chartConfig = {
     debit: {
@@ -14,11 +15,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export type TransactionSummaryChartProps = {
-    data: {
-        key: string;
-        debit: number;
-        credit: number;
-    }[];
+    data: TransactionSummaryData[];
 };
 
 export function TransactionSummaryChart({ data }: TransactionSummaryChartProps) {

@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const createTrxnFormSchema = z.object({
-    particulars: z.string().optional(),
-    amount: z.string().optional(),
-    category: z.enum(["FOOD"]).optional(),
-    type: z.enum(["CREDIT", "DEBIT"]).optional(),
+    particular: z.string().min(1, "Particulars is required"),
+    amount: z.string().min(1, "Amount is required"),
+    category: z.string().min(1, "Category is required"),
+    type: z.string().min(1, "Type is required"),
 });
