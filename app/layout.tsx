@@ -4,6 +4,7 @@ import AppBar from "@/features/navigation/components/AppBar";
 import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import RootProvider from "@/lib/providers/RootProvider";
+import { Toaster } from "@/components/ui/sonner";
 import localFont from "next/font/local";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -40,6 +41,7 @@ export default function RootLayout({
                         {children}
                     </div>
                 </RootProvider>
+                <Toaster />
             </body>
         </html>
     );

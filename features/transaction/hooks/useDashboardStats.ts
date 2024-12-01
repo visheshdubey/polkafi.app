@@ -1,4 +1,6 @@
+import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import apiClient from "@/lib/api-client";
+import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 
 export interface ChartData {
@@ -20,8 +22,8 @@ function formatDate(dateString: string, dayRange: number) {
 }
 
 export function useDashboardStats(dayRange: number) {
-    return useQuery({
-        queryKey: ['dashboard-stats', dayRange],
+    const query = useQuery({
+        queryKey: [QUERY_KEYS.DashboardStats, dayRange],
         queryFn: async () => {
             const response = await apiClient.get({
                 path: `dashboard-stats?dayRange=${dayRange}`
@@ -35,4 +37,14 @@ export function useDashboardStats(dayRange: number) {
             return data;
         }
     });
+
+    const { error } = query;
+
+    if (error) {
+        toast.error("Failed to fetch dashboard stats", {
+            description: error.message || "Please try again later",
+        });
+    }
+
+    return query;
 } 

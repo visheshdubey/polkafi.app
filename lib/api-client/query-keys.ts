@@ -1,5 +1,6 @@
 export const QUERY_KEYS = {
     TransactionsList: "TransactionsList",
     CategoriesList: 'categories-list',
-    categories: 'categories',
+    Profile: 'profile',
+    DashboardStats: 'dashboard-stats',
 } as const;

@@ -8,6 +8,7 @@ import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import { Transaction } from "@prisma/client";
 import apiClient from "@/lib/api-client";
 import { mapInfiniteTransactionAPIResToUI } from "../mapper";
+import { toast } from "sonner";
 
 interface FetchTransactionsParams {
     pageParam?: string;
@@ -43,12 +44,23 @@ export function useFetchInfiniteTrxns(options: UseFetchInfiniteTrxnsOptions = {}
         return () => debouncedUpdate.cancel();
     }, [filters, debounceMs]);
 
-    return useInfiniteQuery({
+    const query = useInfiniteQuery({
         queryKey: [QUERY_KEYS.TransactionsList, pageSize, debouncedFilters],
         queryFn: ({ pageParam }) => fetchTransactions({ pageParam, pageSize, filters: debouncedFilters }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.hasMore ? lastPage.nextCursor : undefined,
         enabled,
         select: transformQueryData,
+
     });
+
+    const { error } = query;
+
+    if (error) {
+        toast.error("Failed to fetch transactions", {
+            description: error.message || "Please try again later",
+        });
+    }
+
+    return query;
 }

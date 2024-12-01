@@ -1,4 +1,5 @@
 import apiClient from "@/lib/api-client";
+import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 
 interface TextToJsonOptions {
@@ -20,6 +21,11 @@ export function useTextToJson(options: TextToJsonOptions = {}) {
     return useMutation({
         mutationFn: convertTextToJson,
         onSuccess,
-        onError,
+        onError: (error: Error) => {
+            toast.error("Failed to convert text", {
+                description: error.message || "Please try again later",
+            });
+            onError?.(error);
+        },
     });
 } 
