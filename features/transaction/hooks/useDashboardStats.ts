@@ -1,3 +1,4 @@
+import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import apiClient from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -21,7 +22,7 @@ function formatDate(dateString: string, dayRange: number) {
 
 export function useDashboardStats(dayRange: number) {
     return useQuery({
-        queryKey: ['dashboard-stats', dayRange],
+        queryKey: [QUERY_KEYS.DashboardStats, dayRange],
         queryFn: async () => {
             const response = await apiClient.get({
                 path: `dashboard-stats?dayRange=${dayRange}`

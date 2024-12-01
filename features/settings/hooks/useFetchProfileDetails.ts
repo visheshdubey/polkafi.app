@@ -1,3 +1,4 @@
+import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import apiClient from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -11,7 +12,7 @@ interface ProfileDetails {
 
 export const useFetchProfileDetails = () => {
     return useQuery<ProfileDetails>({
-        queryKey: ["profile"],
+        queryKey: [QUERY_KEYS.Profile],
         queryFn: async () => {
             return (await apiClient.get({ path: "profile" })).json();
         },

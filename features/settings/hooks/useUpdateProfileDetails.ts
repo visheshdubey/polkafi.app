@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import apiClient from "@/lib/api-client";
 
 interface UpdateProfileData {
@@ -22,7 +23,7 @@ export const useUpdateProfileDetails = () => {
             return (await apiClient.put({ path: "profile", data })).json();
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["profile"] });
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.Profile] });
         },
     });
 };

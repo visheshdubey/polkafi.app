@@ -17,7 +17,7 @@ const fetchCategories = async (): Promise<Category[]> => {
 
 export const useFetchAllCategories = () => {
     return useQuery({
-        queryKey: [QUERY_KEYS.categories],
+        queryKey: [QUERY_KEYS.CategoriesList],
         queryFn: fetchCategories,
     });
 }; 

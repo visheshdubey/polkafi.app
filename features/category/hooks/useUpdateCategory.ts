@@ -25,7 +25,7 @@ export const useUpdateCategory = () => {
     return useMutation({
         mutationFn: updateCategory,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.categories] });
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CategoriesList] });
         },
     });
 };
