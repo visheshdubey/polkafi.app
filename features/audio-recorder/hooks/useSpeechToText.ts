@@ -1,4 +1,5 @@
 import apiClient from "@/lib/api-client";
+import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 
 interface SpeechToTextOptions {
@@ -29,6 +30,11 @@ export function useSpeechToText(options: SpeechToTextOptions = {}) {
     return useMutation({
         mutationFn: transcribeAudio,
         onSuccess,
-        onError,
+        onError: (error: Error) => {
+            toast.error("Failed to transcribe audio", {
+                description: error.message || "Please try again later",
+            });
+            onError?.(error);
+        },
     });
 }
