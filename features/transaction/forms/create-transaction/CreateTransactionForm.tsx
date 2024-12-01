@@ -1,14 +1,13 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { Button } from "@/components/ui/button";
+import { ButtonAsync } from "@/components/primitives/ui/button-async";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TransactionCreateMode } from "@/lib/entities";
 import { createTrxnFormSchema } from "./schema";
 import { useCreateTransaction } from "../../hooks/useCreateTransaction";
 import { useForm } from "react-hook-form";
-import { useIntersectionObserver } from "../../hooks/useIntersectionObserver";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -122,9 +121,14 @@ const CreateTransactionForm = () => {
                     />
                 </div>
 
-                <Button type="submit" className="h-10 ml-auto rounded-full w-32 font-medium" disabled={isPending}>
-                    {isPending ? "Submitting..." : "Submit"}
-                </Button>
+                <ButtonAsync
+                    type="submit"
+                    className="h-10 ml-auto rounded-full w-32 font-medium"
+                    isLoading={isPending}
+                    loadingText="Submitting..."
+                >
+                    Submit
+                </ButtonAsync>
             </form>
         </Form>
     );
