@@ -16,7 +16,11 @@ interface FetchTransactionsParams {
     filters?: Record<string, unknown>;
 }
 
-const fetchTransactions = async ({ pageParam = "", pageSize, filters }: FetchTransactionsParams): Promise<PaginatedResponse<Transaction & { category: Category }>> => {
+const fetchTransactions = async ({
+    pageParam = "",
+    pageSize,
+    filters
+}: FetchTransactionsParams): Promise<PaginatedResponse<Transaction & { category: Category }>> => {
     const response = await apiClient.get({
         path: "transaction",
         params: {
@@ -29,17 +33,26 @@ const fetchTransactions = async ({ pageParam = "", pageSize, filters }: FetchTra
     if (!response.ok) {
         throw new Error("Failed to fetch transactions");
     }
+
     return response.json();
 };
 
-const transformQueryData = (query: InfiniteData<PaginatedResponse<Transaction & { category: Category }>>): TransactionData => ({
+const transformQueryData = (
+    query: InfiniteData<PaginatedResponse<Transaction & { category: Category }>>
+): TransactionData => ({
     transactions: mapInfiniteTransactionAPIResToUI(query),
     hasMore: get(query, "pages[0].hasMore", false),
     total: get(query, "pages[0].total", 0),
 });
 
 export function useFetchInfiniteTrxns(options: UseFetchInfiniteTrxnsOptions = {}) {
-    const { enabled = true, pageSize = 10, filters, debounceMs = 150 } = options;
+    const {
+        enabled = true,
+        pageSize = 10,
+        filters,
+        debounceMs = 150
+    } = options;
+
     const [debouncedFilters, setDebouncedFilters] = useState(filters);
 
     useEffect(() => {
@@ -50,12 +63,15 @@ export function useFetchInfiniteTrxns(options: UseFetchInfiniteTrxnsOptions = {}
 
     const query = useInfiniteQuery({
         queryKey: [QUERY_KEYS.TransactionsList, pageSize, debouncedFilters],
-        queryFn: ({ pageParam }) => fetchTransactions({ pageParam, pageSize, filters: debouncedFilters }),
+        queryFn: ({ pageParam }) => fetchTransactions({
+            pageParam,
+            pageSize,
+            filters: debouncedFilters
+        }),
         initialPageParam: "",
         getNextPageParam: (lastPage) => lastPage.hasMore ? lastPage.nextCursor : undefined,
         enabled,
         select: transformQueryData,
-
     });
 
     const { error } = query;
