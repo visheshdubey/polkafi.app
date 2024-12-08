@@ -97,7 +97,16 @@ export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ u
         total: totalItemsInDb,
     };
 };
-export const fetchTransactionsById = (userId: string, trxnId: string) => { };
+
+export const fetchTransactionsById = (userId: string, trxnId: string) => {
+    return db.transaction.findUnique({
+        where: {
+            id: trxnId,
+            userId,
+        },
+    });
+};
+
 export const createTransactionUsingFormMode = async (userId: string, data: any) => {
     const category = await db.category.findMany({
         where: {
@@ -164,8 +173,17 @@ export const createTransactionUsingAudioMode = async (userId: string, file: Uplo
     return await createTransactionUsingTextMode(userId, createTrxnInput);
 };
 
-export const updateTransaction = (userId: string, trxnId: string, data: any) => { };
-export const deleteTransaction = (userId: string, trxnId: string) => { };
+export const updateTransaction = (userId: string, trxnId: string, data: Transaction) => {
+    return db.transaction.update({
+        where: { id: trxnId, userId },
+        data,
+    });
+};
+export const deleteTransaction = (userId: string, trxnId: string) => {
+    return db.transaction.delete({
+        where: { id: trxnId, userId },
+    });
+};
 
 export const createTranscription = async (userId: string, data: any) =>
     await db.transcription.create({

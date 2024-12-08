@@ -14,7 +14,8 @@ export const mapInfiniteTransactionAPIResToUI = (query: TransactionQueryType): T
     const transformedData: TransactionListItemProps[] = data.map((item) => {
         return {
             ...item,
-            id: getShortTransactionId(item.id),
+            id: item.id,
+            shortId: getShortTransactionId(item.id),
             particular: getParticulars(item.particular),
             amount: BigInt(item.amount),
             type: item.type as TransactionType,

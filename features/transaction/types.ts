@@ -3,6 +3,7 @@ import { TransactionType } from "@prisma/client";
 // From TransactionListItem.tsx
 export interface TransactionListItemType {
     id: string;
+    shortId: string;
     particular: string;
     amount: bigint;
     date: string | Date;
