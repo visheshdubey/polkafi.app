@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import React from "react";
 import { TransactionListItemType } from "../types";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,7 @@ export interface TransactionListItemProps extends TransactionListItemType {
 
 const TransactionListItem: React.FC<TransactionListItemProps> = ({
     id: transactionId,
+    shortId,
     particular: description,
     amount,
     date,
@@ -38,28 +40,33 @@ const TransactionListItem: React.FC<TransactionListItemProps> = ({
               });
 
     return (
-        <div className={cn("bg-white flex justify-between items-center lg:items-end gap-2 w-full p-3 lg:p-4", className)}>
+        <Link
+            href={`/app/${transactionId}`}
+            className={cn("bg-white flex justify-between items-center lg:items-end gap-2 w-full p-3 lg:p-4", className)}
+        >
             <div className="flex flex-col gap-1 lg:gap-2">
-                <span className="text-[11px] text-neutral-400">{transactionId}</span>
+                <span className="text-[11px] text-neutral-400">{shortId}</span>
                 <div className="flex items-center flex-wrap gap-3 lg:gap-6">
-                    <div className="text-base/[120%] lg:text-lg font-medium text-neutral-800">{description}</div>
+                    <div className="text-sm/[120%] grow lg:grow-0 lg:text-lg font-medium text-neutral-800">{description}</div>
                     <div className="flex *:rounded-full items-center flex-wrap gap-2">
                         {category && (
-                            <Badge variant="secondary" className="font-normal">
+                            <Badge variant="secondary" className="font-normal text-xs">
                                 {category}
                             </Badge>
                         )}
-                        <Badge variant="secondary" className="font-normal">
+                        <Badge variant="secondary" className="font-normal text-xs">
                             {formattedDate}
                         </Badge>
-                        <Badge variant="secondary" className={cn("font-normal", typeColor)}>
+                        <Badge variant="secondary" className={cn("font-normal text-xs", typeColor)}>
                             {type.charAt(0).toUpperCase() + type.slice(1)}
                         </Badge>
                     </div>
+
+                    <span className={cn("text-lg lg:hidden font-bold", amountColor)}>{formattedAmount}</span>
                 </div>
             </div>
-            <span className={cn("text-lg font-bold", amountColor)}>{formattedAmount}</span>
-        </div>
+            <span className={cn("text-lg hidden lg:block font-bold", amountColor)}>{formattedAmount}</span>
+        </Link>
     );
 };
 
