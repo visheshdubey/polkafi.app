@@ -1,5 +1,6 @@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { get, useForm } from "react-hook-form";
 
 import { ButtonAsync } from "@/components/primitives/ui/button-async";
 import { CategorySelect } from "@/features/category/components/CategorySelect";
@@ -8,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Transaction } from "@prisma/client";
 import { updateTrxnFormSchema } from "./schema";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { useUpdateTransaction } from "../../hooks/useUpdateTransaction";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,19 +19,19 @@ const UpdateTransactionForm = ({ transaction }: { transaction?: Transaction }) =
     const form = useForm<z.infer<typeof updateTrxnFormSchema>>({
         resolver: zodResolver(updateTrxnFormSchema),
         defaultValues: {
-            particular: transaction?.particular ?? "",
-            amount: transaction?.amount.toString() ?? "",
-            category: transaction?.categoryId ?? "",
-            type: transaction?.type,
+            particular: get(transaction, "particular", ""),
+            amount: get(transaction, "amount", "").toString(),
+            category: get(transaction, "categoryId", ""),
+            type: get(transaction, "type", ""),
         },
     });
 
     useEffect(() => {
         form.reset({
-            particular: transaction?.particular ?? "",
-            amount: transaction?.amount.toString() ?? "",
-            category: transaction?.categoryId ?? "",
-            type: transaction?.type,
+            particular: get(transaction, "particular", ""),
+            amount: get(transaction, "amount", "").toString(),
+            category: get(transaction, "categoryId", ""),
+            type: get(transaction, "type", ""),
         });
     }, [transaction]);
 

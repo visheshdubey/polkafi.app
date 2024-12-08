@@ -143,6 +143,9 @@ export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ u
 
     const where: TransactionFindManyWhere = {
         AND: [
+            {
+                userId
+            },
             handleTransactionTypeFilter(searchQueryParams["type"]) || {},
             handleTransactionCategoryFilter(searchQueryParams["category"]) || {},
             handleDateFilter(searchQueryParams["date"]) || {},

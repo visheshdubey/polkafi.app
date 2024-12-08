@@ -16,7 +16,7 @@ type Props = {
 };
 
 const UpdateTransactionWrapper = ({ transactionId }: Props) => {
-    const { data: transaction } = useFetchTransactionById(transactionId);
+    const { data: transaction, error } = useFetchTransactionById(transactionId);
     const { mutate: deleteTransaction, isPending: deleteTransactionPending } = useDeleteTransaction();
     const router = useRouter();
     const breadcrumbItems = [
@@ -44,7 +44,7 @@ const UpdateTransactionWrapper = ({ transactionId }: Props) => {
                 </div>
 
                 <div className="w-full shadow-sm min-h-12 bg-white mt-4 lg:p-6 p-4 rounded-xl">
-                    <UpdateTransactionForm transaction={transaction} />
+                    {error ? <div className="text-red-500">{error.message}</div> : <UpdateTransactionForm transaction={transaction} />}
                 </div>
             </MagicalGradientCard>
         </div>
