@@ -1,5 +1,8 @@
 import { User, UserRole } from "@prisma/client";
+import { get, isEmpty } from "lodash";
 
+import { createCategory } from "../categories";
+import { defaultCategories } from "@/lib/entities";
 import prisma from "@/server/db/prisma";
 
 export type AuthUserData = {
@@ -16,7 +19,7 @@ export async function findUserByEmail(email: string): Promise<User | null> {
 }
 
 export async function createUser(userData: AuthUserData): Promise<User> {
-    return prisma.user.create({
+    const user = await prisma.user.create({
         data: {
             email: userData.email,
             name: userData.name || null,
@@ -26,6 +29,16 @@ export async function createUser(userData: AuthUserData): Promise<User> {
             role: UserRole.USER
         }
     });
+
+    await createDefaultCategories(user.id);
+
+    return user;
+}
+
+async function createDefaultCategories(userId: string) {
+    for (const category of defaultCategories) {
+        await createCategory(userId, { name: category });
+    }
 }
 
 export async function updateUserLogin(
@@ -50,6 +63,23 @@ export async function updateUserToken(
         data: { token }
     });
 }
+
+export const isUserValid = (userId: string) => {
+    const user = prisma.user.findUnique({
+        where: { id: userId }
+    });
+
+    return isEmpty(user);
+};
+
+export const userHasCredits = async (userId: string, credits: number = 1) => {
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+    console.log(get(user, "credits", 0) > credits, credits);
+
+    return get(user, "credits", 0) > credits;
+};
 
 export async function findOrCreateUser(
     userData: AuthUserData,

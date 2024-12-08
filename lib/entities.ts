@@ -78,3 +78,7 @@ export const mapTransactionTypeToFilterValue = (type: TransactionType) => {
 export const mapFilterValueToTransactionType = (value: string) => {
     return FilterOptions[AvailableFilters.type].find((t) => t.id === value)?.id;
 };
+
+
+export const defaultCategories = ["Food", "Transport", "Entertainment", "Shopping", "Other"];
+export const maxCategories = 20;

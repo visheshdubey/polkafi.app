@@ -17,6 +17,11 @@ const createTransaction = async ({ data, mode = TransactionCreateMode.Form }: Cr
         params: { mode },
         data,
     });
+
+    if (!response.ok) {
+        throw new Error("Failed to create transaction");
+    }
+
     return response.json();
 };
 

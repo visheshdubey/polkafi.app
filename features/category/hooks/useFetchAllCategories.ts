@@ -13,7 +13,13 @@ interface Category {
 }
 
 const fetchCategories = async (): Promise<Category[]> => {
-    return await (await apiClient.get({ path: 'category' })).json();
+    const response = await apiClient.get({ path: 'category' });
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+    }
+
+    return response.json();
 };
 
 export const useFetchAllCategories = () => {

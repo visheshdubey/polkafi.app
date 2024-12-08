@@ -7,7 +7,11 @@ interface SpeechToTextOptions {
     onError?: (error: Error) => void;
 }
 
-const transcribeAudio = async (audioBlob: Blob): Promise<{ text: string }> => {
+interface SpeechToTextResponse {
+    text: string;
+}
+
+const transcribeAudio = async (audioBlob: Blob): Promise<SpeechToTextResponse> => {
     const audioFile = new File(
         [audioBlob],
         `audio-${Date.now()}.webm`,
@@ -21,6 +25,11 @@ const transcribeAudio = async (audioBlob: Blob): Promise<{ text: string }> => {
         path: "transaction/speech-to-text",
         formData,
     });
+
+    if (!response.ok) {
+        throw new Error("Failed to transcribe audio");
+    }
+
     return response.json();
 };
 

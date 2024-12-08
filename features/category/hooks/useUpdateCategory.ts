@@ -1,23 +1,28 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
+import { Category } from "@prisma/client";
 import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import apiClient from "@/lib/api-client";
 import { toast } from "sonner";
 
-interface UpdateCategoryData {
+interface UpdateCategoryRequest {
     id: string;
     data: {
         name: string;
     };
 }
 
-const updateCategory = async ({ id, data }: UpdateCategoryData) => {
-    return await (
-        await apiClient.put({
-            path: `category/${id}`,
-            data,
-        })
-    ).json();
+const updateCategory = async ({ id, data }: UpdateCategoryRequest): Promise<Category> => {
+    const response = await apiClient.put({
+        path: `category/${id}`,
+        data,
+    });
+
+    if (!response.ok) {
+        throw new Error("Failed to update category");
+    }
+
+    return response.json();
 };
 
 export const useUpdateCategory = () => {
@@ -29,8 +34,10 @@ export const useUpdateCategory = () => {
             queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.CategoriesList] });
             toast.success("Category updated successfully");
         },
-        onError: (error) => {
-            toast.error("Failed to update category");
+        onError: (error: Error) => {
+            toast.error("Failed to update category", {
+                description: error.message || "Please try again later",
+            });
         },
     });
 };

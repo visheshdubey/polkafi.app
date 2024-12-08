@@ -7,11 +7,20 @@ interface TextToJsonOptions {
     onError?: (error: Error) => void;
 }
 
-const convertTextToJson = async (text: { text: string }): Promise<any> => {
+interface TextToJsonRequest {
+    text: string;
+}
+
+const convertTextToJson = async (text: TextToJsonRequest): Promise<any> => {
     const response = await apiClient.post({
         path: "transaction/text-to-json",
         data: text,
     });
+
+    if (!response.ok) {
+        throw new Error("Failed to convert text to JSON");
+    }
+
     return response.json();
 };
 

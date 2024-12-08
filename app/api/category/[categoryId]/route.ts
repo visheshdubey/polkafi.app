@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isUserUnauthorized, unauthorized } from "@/lib/utils/default-response";
 
 import { get } from "lodash";
 import { getAuthSession } from "@/features/auth/utils";
@@ -17,8 +18,8 @@ export async function PUT(
         const session = await getAuthSession();
         const userId = get(session, "user.id");
 
-        if (!userId) {
-            return new NextResponse("Unauthorized", { status: 401 });
+        if (isUserUnauthorized(userId)) {
+            return unauthorized;
         }
 
         const body = await req.json();
