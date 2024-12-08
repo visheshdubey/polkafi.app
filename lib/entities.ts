@@ -81,3 +81,4 @@ export const mapFilterValueToTransactionType = (value: string) => {
 
 
 export const defaultCategories = ["Food", "Transport", "Entertainment", "Shopping", "Other"];
+export const maxCategories = 20;

@@ -12,6 +12,9 @@ const convertTextToJson = async (text: { text: string }): Promise<any> => {
         path: "transaction/text-to-json",
         data: text,
     });
+    if (!response.ok) {
+        throw new Error("Failed to convert text to JSON");
+    }
     return response.json();
 };
 

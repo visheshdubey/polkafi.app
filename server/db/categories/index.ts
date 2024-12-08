@@ -1,3 +1,4 @@
+import { maxCategories } from "@/lib/entities";
 import prisma from "../prisma";
 
 const snakeUpperCase = (str: string): string => {
@@ -16,6 +17,17 @@ export const fetchAllCategories = async (userId: string) => {
 };
 
 export const createCategory = async (userId: string, data: { name: string }) => {
+    const existingCategoryCount = await prisma.category.count({
+        where: {
+            name: data.name,
+            userId,
+        },
+    });
+
+    if (existingCategoryCount >= maxCategories) {
+        throw new Error("User has reached the maximum number of categories");
+    }
+
     return await prisma.category.create({
         data: {
             name: data.name,

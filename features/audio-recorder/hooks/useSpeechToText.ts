@@ -21,6 +21,9 @@ const transcribeAudio = async (audioBlob: Blob): Promise<{ text: string }> => {
         path: "transaction/speech-to-text",
         formData,
     });
+    if (!response.ok) {
+        throw new Error("Failed to transcribe audio");
+    }
     return response.json();
 };
 

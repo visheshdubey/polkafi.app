@@ -15,7 +15,6 @@ export async function GET(request: NextRequest) {
             return unauthorized;
         }
 
-
         const searchParams = request.nextUrl.searchParams;
         const dayRange = parseInt(searchParams.get("date") || "30");
         const reqQueryObj = new URL(request.url || "");

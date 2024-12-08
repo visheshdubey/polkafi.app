@@ -12,12 +12,14 @@ interface UpdateCategoryData {
 }
 
 const updateCategory = async ({ id, data }: UpdateCategoryData) => {
-    return await (
-        await apiClient.put({
-            path: `category/${id}`,
-            data,
-        })
-    ).json();
+    const response = await apiClient.put({
+        path: `category/${id}`,
+        data,
+    });
+    if (!response.ok) {
+        throw new Error("Failed to update category");
+    }
+    return response.json();
 };
 
 export const useUpdateCategory = () => {

@@ -1,4 +1,5 @@
 import { User, UserRole } from "@prisma/client";
+import { get, isEmpty } from "lodash";
 
 import { createCategory } from "../categories";
 import { defaultCategories } from "@/lib/entities";
@@ -62,6 +63,23 @@ export async function updateUserToken(
         data: { token }
     });
 }
+
+export const isUserValid = (userId: string) => {
+    const user = prisma.user.findUnique({
+        where: { id: userId }
+    });
+
+    return isEmpty(user);
+};
+
+export const userHasCredits = async (userId: string, credits: number = 1) => {
+    const user = await prisma.user.findUnique({
+        where: { id: userId }
+    });
+    console.log(get(user, "credits", 0) > credits, credits);
+
+    return get(user, "credits", 0) > credits;
+};
 
 export async function findOrCreateUser(
     userData: AuthUserData,

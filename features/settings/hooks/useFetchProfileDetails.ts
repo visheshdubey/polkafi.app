@@ -15,7 +15,11 @@ export const useFetchProfileDetails = () => {
     const query = useQuery<ProfileDetails>({
         queryKey: [QUERY_KEYS.Profile],
         queryFn: async () => {
-            return (await apiClient.get({ path: "profile" })).json();
+            const response = await apiClient.get({ path: "profile" });
+            if (!response.ok) {
+                throw new Error("Failed to fetch profile details");
+            }
+            return response.json();
         },
     });
 

@@ -48,10 +48,11 @@ const CreateTransactionForm = () => {
             {
                 onSuccess: () => {
                     form.reset();
-                    // router.push("/transactions");
                 },
             },
         );
+
+        form.reset();
     };
 
     return (

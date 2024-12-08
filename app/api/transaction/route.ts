@@ -4,13 +4,15 @@ import {
     createTransactionUsingTextMode,
     fetchPaginatedTransactions,
 } from "@/server/db/transactions";
-import { internalServerError, isUserUnauthorized, unauthorized } from "@/lib/utils/default-response";
+import { forbidden, internalServerError, isUserUnauthorized, unauthorized } from "@/lib/utils/default-response";
 
 import { TransactionCreateMode } from "@/lib/entities";
+import { deductCredit } from "@/server/db/credits";
 import { get } from "lodash";
 import { getAuthSession } from "@/features/auth/utils";
 import { queryStringToObject } from "@/lib/utils";
 import { serializeBigIntValues } from "@/lib/utils/bigInt-serializer";
+import { userHasCredits } from "@/server/db/user/UserRepository";
 
 export const POST = async (req: Request) => {
     try {
@@ -23,6 +25,10 @@ export const POST = async (req: Request) => {
 
         if (isUserUnauthorized(userId)) {
             return unauthorized;
+        }
+
+        if (!(await userHasCredits(userId, 1))) {
+            return forbidden;
         }
 
         let transaction = {};
@@ -49,6 +55,8 @@ export const POST = async (req: Request) => {
                 transaction = await createTransactionUsingFormMode(userId, body);
                 break;
         }
+
+        await deductCredit(userId, 1);
 
         return Response.json(serializeBigIntValues(transaction));
     } catch (error) {

@@ -16,6 +16,9 @@ const createCategory = async ({ data }: CreateCategoryParams): Promise<Category>
         path: "category",
         data,
     });
+    if (!response.ok) {
+        throw new Error("Failed to create category");
+    }
     return response.json();
 };
 
