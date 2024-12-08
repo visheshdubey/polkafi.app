@@ -28,7 +28,7 @@ export function ProfileSection() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: profile?.name || "",
-            email: "", // This will be disabled
+            email: profile?.email || "",
             credits: profile?.credits || 0,
             defaultCurrency: profile?.defaultCurrency || null,
         },
@@ -37,7 +37,7 @@ export function ProfileSection() {
     useEffect(() => {
         form.reset({
             name: profile?.name || "",
-            email: "", // This will be disabled
+            email: profile?.email || "",
             credits: profile?.credits || 0,
             defaultCurrency: profile?.defaultCurrency || null,
         });
@@ -61,6 +61,19 @@ export function ProfileSection() {
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input {...field} disabled />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

@@ -33,3 +33,7 @@ const getParticulars = (particular: string | null) => {
 
     return firstCharInUppercase + particular?.slice(1);
 };
+
+export const findCategoryByCategoryLabel = (categoryList: Category[], categoryLabel: string) => {
+    return categoryList.find((category) => category.label === categoryLabel);
+};

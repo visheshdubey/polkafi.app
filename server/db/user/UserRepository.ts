@@ -35,7 +35,7 @@ export async function createUser(userData: AuthUserData): Promise<User> {
     return user;
 }
 
-async function createDefaultCategories(userId: string) {
+export async function createDefaultCategories(userId: string) {
     for (const category of defaultCategories) {
         await createCategory(userId, { name: category });
     }

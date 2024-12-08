@@ -1,26 +1,28 @@
 import prisma from "../prisma";
 
-export const fetchUserProfile = async (email: string) => {
+export const fetchUserProfile = async (userId: string) => {
     return await prisma.user.findUnique({
-        where: { email },
+        where: { id: userId },
         select: {
             id: true,
             name: true,
             avatar: true,
+            email: true,
             defaultCurrency: true,
             credits: true
         }
     });
 };
 
-export const updateUserProfile = async (email: string, data: { name: string }) => {
+export const updateUserProfile = async (userId: string, data: { name: string }) => {
     return await prisma.user.update({
-        where: { email },
+        where: { id: userId },
         data,
         select: {
             id: true,
             name: true,
             avatar: true,
+            email: true,
             defaultCurrency: true,
             credits: true
         }

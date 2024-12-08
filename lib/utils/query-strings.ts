@@ -60,8 +60,6 @@ export function objectToQueryString(obj: QueryParamObject, options: QueryStringO
     }
 
     function processKeyValue(key: string, value: QueryParamValue, prefix = ""): string | void {
-        console.log(key, value);
-
         if (removeUndefinedOrNull && isEmpty(value)) {
             return;
         }

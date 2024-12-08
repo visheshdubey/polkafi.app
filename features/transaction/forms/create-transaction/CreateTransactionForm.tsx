@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TransactionCreateMode } from "@/lib/entities";
 import { createTrxnFormSchema } from "./schema";
+import { findCategoryByCategoryLabel } from "../../mapper";
 import { useCreateTransaction } from "../../hooks/useCreateTransaction";
 import { useEffect } from "react";
+import { useFetchAllCategories } from "@/features/category/hooks/useFetchAllCategories";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/store/store";
@@ -18,25 +20,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 const CreateTransactionForm = () => {
     const router = useRouter();
     const { mutate: createTransaction, isPending } = useCreateTransaction();
-    const { parsedJson } = useStore((state) => state.recorder);
+    const { parsedJson, updateParsedJson } = useStore((state) => state.recorder);
+    const { data: categoryList } = useFetchAllCategories();
 
     const form = useForm<z.infer<typeof createTrxnFormSchema>>({
         resolver: zodResolver(createTrxnFormSchema),
         defaultValues: {
             particular: parsedJson?.particulars,
             amount: parsedJson?.amount,
-            category: parsedJson?.category,
+            category: categoryList ? findCategoryByCategoryLabel(categoryList, parsedJson?.category || "OTHER")?.id : undefined,
             type: parsedJson?.type,
         },
     });
 
     useEffect(() => {
-        form.reset({
-            particular: parsedJson?.particulars,
-            amount: parsedJson?.amount,
-            category: parsedJson?.category,
-            type: parsedJson?.type,
-        });
+        if (parsedJson?.particulars || parsedJson?.amount || parsedJson?.category || parsedJson?.type) {
+            form.reset({
+                particular: parsedJson?.particulars,
+                amount: parsedJson?.amount,
+                category: categoryList ? findCategoryByCategoryLabel(categoryList, parsedJson?.category || "OTHER")?.id : undefined,
+                type: parsedJson?.type,
+            });
+        }
     }, [parsedJson]);
 
     const onSubmit = (values: z.infer<typeof createTrxnFormSchema>) => {
@@ -47,12 +52,16 @@ const CreateTransactionForm = () => {
             },
             {
                 onSuccess: () => {
-                    form.reset();
+                    updateParsedJson({});
+                    form.reset({
+                        particular: "",
+                        amount: "",
+                        category: "",
+                        type: "",
+                    });
                 },
             },
         );
-
-        form.reset();
     };
 
     return (

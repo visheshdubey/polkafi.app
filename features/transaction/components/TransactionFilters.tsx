@@ -41,9 +41,9 @@ export const TransactionFilters = ({ onFetchNextPage }: Props) => {
 
     return (
         <div className="flex  px-3 lg:px-6 items-center justify-between">
-            <div className="items-center flex-wrap lg:flex-nowrap flex gap-3 lg:gap-6">
+            <div className="items-center w-full md:w-auto flex-wrap lg:flex-nowrap flex gap-3 lg:gap-6">
                 <CategorySelect
-                    className="h-8 w-full lg:w-[160px] rounded-full bg-white text-xs"
+                    className="h-8 w-full lg:w-[160px] shadow-none rounded-full bg-white text-xs"
                     value={filters.category[0] || ""}
                     onSelect={(value) => updateFilter(AvailableFilters.category, [value])}
                 />
@@ -52,7 +52,7 @@ export const TransactionFilters = ({ onFetchNextPage }: Props) => {
                     value={getTransactionTypeValue()}
                     onValueChange={(value) => updateFilter(AvailableFilters.type, [mapFilterValueToTransactionType(value)])}
                 >
-                    <SelectTrigger className="h-8 w-full lg:w-[160px] rounded-full bg-white gap-1 text-xs">
+                    <SelectTrigger className="h-8 w-full shadow-none lg:w-[160px] rounded-full bg-white gap-1 text-xs">
                         <SelectValue placeholder="Select Type" className="text-xs" />
                     </SelectTrigger>
                     <SelectContent>

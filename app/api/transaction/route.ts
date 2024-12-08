@@ -56,8 +56,6 @@ export const POST = async (req: Request) => {
                 break;
         }
 
-        await deductCredit(userId, 1);
-
         return Response.json(serializeBigIntValues(transaction));
     } catch (error) {
         console.log(error);

@@ -5,6 +5,7 @@ import { PaginatedResponse } from "@/lib/types/shared";
 import { Uploadable } from "openai/uploads.mjs";
 import { dashboardStatsDayRangeOptionNowMinus } from "@/lib/entities";
 import db from "@/server/db/prisma";
+import { deductCredit } from "../credits";
 import get from "lodash/get";
 import { isEmpty } from "lodash";
 
@@ -154,7 +155,7 @@ export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ u
             ...handleCursorFilter(searchQueryParams["cursor"]),
             where,
             orderBy: {
-                id: "asc",
+                createdAt: "desc",
             },
             include: {
                 category: true,
@@ -215,18 +216,13 @@ export const createTransactionUsingFormMode = async (userId: string, data: Creat
     }
 
     try {
-        const category = await db.category.findMany({
-            where: {
-                name: data.category,
-            },
-        });
-
         return await db.transaction.create({
             data: {
                 particular: data.particular,
                 amount: BigInt(data.amount),
                 type: data.type,
-                categoryId: get(category, "[0].id"),
+                categoryId: get(data, "category"),
+                category: undefined,
                 textToStruturedJsonId: data.textToStruturedJsonId,
                 userId,
                 currency: data.currency,
@@ -246,6 +242,8 @@ export const createTransactionUsingTextMode = async (userId: string, data: any) 
         prompt,
         schema: trxnSchema(["VEHICLE", "FOOD"]),
     })) as string;
+
+    await deductCredit(userId, 1);
 
     const parsedOpenAiRes = JSON.parse(openaiRes);
 
@@ -272,6 +270,8 @@ export const createTransactionUsingTextMode = async (userId: string, data: any) 
 
 export const createTransactionUsingAudioMode = async (userId: string, file: Uploadable) => {
     const openaiRes = await openai.speechToText({ file });
+
+    await deductCredit(userId, 1);
 
     const transcriptionId = await db.transcription.create({
         data: {

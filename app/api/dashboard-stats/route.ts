@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
         const search = get(reqQueryObj, "search");
         const searchQueryParamFilters = queryStringToObject(search, { arrayFormat: "comma" });
         const validRanges = [1, 7, 30, 90, 180, 365];
+
         if (!validRanges.includes(dayRange)) {
             return NextResponse.json(
                 { error: "Invalid dayRange. Must be one of: 1, 7, 30, 90, 180, 365" },
