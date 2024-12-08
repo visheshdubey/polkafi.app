@@ -9,24 +9,15 @@ export interface ChartData {
     credit: string
 }
 
-function formatDate(dateString: string, dayRange: number) {
-    const date = new Date(dateString);
-
-    // For ranges between 180-365 days, show only month
-    if (dayRange > 180) {
-        return date.toLocaleString('default', { month: 'short' });
-    }
-
-    // For ranges 1-180 days, show DD/MM
-    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-}
-
-export function useDashboardStats(dayRange: number) {
+export function useDashboardStats(filters: Record<string, unknown>) {
     const query = useQuery({
-        queryKey: [QUERY_KEYS.DashboardStats, dayRange],
+        queryKey: [QUERY_KEYS.DashboardStats, filters],
         queryFn: async () => {
             const response = await apiClient.get({
-                path: `dashboard-stats?dayRange=${dayRange}`
+                path: `dashboard-stats`,
+                params: {
+                    ...filters,
+                },
             });
             const data = await response.json();
 

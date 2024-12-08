@@ -1,3 +1,6 @@
+import { get, isEmpty } from "lodash";
+
+import { TransactionFindManyWhere } from ".";
 import { TransactionType } from "@prisma/client";
 import prisma from "../prisma";
 
@@ -12,20 +15,67 @@ interface ChartData {
     credit: number;
 }
 
-export async function getDashboardStats(userId: string, dayRange: number) {
+const handleTransactionTypeFilter = (value: TransactionType[]): TransactionFindManyWhere => {
+    if (isEmpty(value)) {
+        return;
+    }
+
+    const type = get(value, "[0]", "").toUpperCase();
+
+    if (type !== TransactionType.CREDIT && type !== TransactionType.DEBIT) {
+        return;
+    }
+
+    return {
+        OR: [
+            {
+                type: {
+                    equals: type as TransactionType,
+                },
+            },
+        ],
+    };
+};
+
+const handleTransactionCategoryFilter = (value: string): TransactionFindManyWhere => {
+    if (isEmpty(value)) {
+        return;
+    }
+
+    return {
+        OR: [
+            {
+                category: {
+                    id: {
+                        equals: get(value, "[0]"),
+                    },
+                },
+            },
+        ],
+    };
+};
+
+export async function getDashboardStats(userId: string, dayRange: number, searchQueryParams: any) {
     const timeFrame = getTimeFrameForRange(dayRange);
     const interval = getIntervalForRange(dayRange);
 
-    // Get total credit and debit
+    const where: TransactionFindManyWhere = {
+        AND: [
+            handleTransactionTypeFilter(searchQueryParams["type"]) || {},
+            handleTransactionCategoryFilter(searchQueryParams["category"]) || {},
+            { userId },
+            {
+                createdAt: {
+                    gte: timeFrame.start,
+                    lte: timeFrame.end
+                }
+            }
+        ],
+    };
+
     const totals = await prisma.transaction.groupBy({
         by: ['type'],
-        where: {
-            userId,
-            createdAt: {
-                gte: timeFrame.start,
-                lte: timeFrame.end
-            }
-        },
+        where,
         _sum: {
             amount: true
         }
@@ -37,7 +87,6 @@ export async function getDashboardStats(userId: string, dayRange: number) {
     const totalDebit = totals.find((t: { type: TransactionType }) =>
         t.type === TransactionType.DEBIT)?._sum.amount?.toString() || '0';
 
-    // Get chart data
     const chartData = await getChartData(userId, timeFrame, interval);
 
     return {
@@ -86,7 +135,7 @@ async function getChartData(userId: string, timeFrame: TimeFrame, interval: stri
             UNION ALL
             SELECT date_trunc('month', time_bucket - interval '1 month')
             FROM months
-            WHERE time_bucket > date_trunc('month', ${timeFrame.start}::timestamp)
+            WHERE time_bucket > date_trunc('month', ${timeFrame.start}::timestamp) 
         )
         SELECT 
             months.time_bucket,

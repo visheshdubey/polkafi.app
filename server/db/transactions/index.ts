@@ -3,13 +3,14 @@ import { openai, prompt, trxnSchema } from "@/server/config/open-ai";
 
 import { PaginatedResponse } from "@/lib/types/shared";
 import { Uploadable } from "openai/uploads.mjs";
+import { dashboardStatsDayRangeOptionNowMinus } from "@/lib/entities";
 import db from "@/server/db/prisma";
 import get from "lodash/get";
 import { isEmpty } from "lodash";
 
-type TransactionFindManyWhere = Prisma.TransactionFindFirstArgs["where"];
+export type TransactionFindManyWhere = Prisma.TransactionFindFirstArgs["where"];
 
-type FetchPaginatedTransactions = (params: {
+export type FetchPaginatedTransactions = (params: {
     userId: string;
     searchQueryParams: any;
     take?: number;
@@ -33,7 +34,7 @@ const handleTransactionTypeFilter = (value: TransactionType[]): TransactionFindM
         return;
     }
 
-    const type = get(value, "[0]");
+    const type = get(value, "[0]", "").toUpperCase();
 
     if (type !== TransactionType.CREDIT && type !== TransactionType.DEBIT) {
         return;
@@ -68,11 +69,26 @@ const handleTransactionCategoryFilter = (value: string): TransactionFindManyWher
     };
 };
 
+const handleDateFilter = (value: number[]): TransactionFindManyWhere => {
+    if (isEmpty(value)) {
+        return;
+    }
+
+    const date = get(value, "[0]");
+
+    return {
+        createdAt: {
+            gte: dashboardStatsDayRangeOptionNowMinus[date as keyof typeof dashboardStatsDayRangeOptionNowMinus],
+        },
+    };
+};
+
 export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ userId, searchQueryParams, take = 5 }) => {
     const where: TransactionFindManyWhere = {
         AND: [
             handleTransactionTypeFilter(searchQueryParams["type"]) || {},
             handleTransactionCategoryFilter(searchQueryParams["category"]) || {},
+            handleDateFilter(searchQueryParams["date"]) || {},
         ],
     };
 
@@ -82,6 +98,9 @@ export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ u
         where,
         orderBy: {
             id: "asc",
+        },
+        include: {
+            category: true,
         },
     });
 
@@ -174,9 +193,16 @@ export const createTransactionUsingAudioMode = async (userId: string, file: Uplo
 };
 
 export const updateTransaction = (userId: string, trxnId: string, data: Transaction) => {
+    const dataToUpdate = {
+        ...data,
+        categoryId: get(data, "category"),
+        category: undefined,
+    };
     return db.transaction.update({
         where: { id: trxnId, userId },
-        data,
+        data: {
+            ...dataToUpdate,
+        },
     });
 };
 export const deleteTransaction = (userId: string, trxnId: string) => {

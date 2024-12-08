@@ -36,7 +36,7 @@ const UpdateTransactionForm = ({ transaction }: { transaction?: Transaction }) =
     }, [transaction]);
 
     const onSubmit = (data: z.infer<typeof updateTrxnFormSchema>) => {
-        updateTransaction({ data });
+        updateTransaction({ data, id: transaction?.id ?? "" });
     };
 
     return (
@@ -77,7 +77,13 @@ const UpdateTransactionForm = ({ transaction }: { transaction?: Transaction }) =
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Category</FormLabel>
-                                <CategorySelect onSelect={field.onChange} value={field.value} defaultValue={field.value} />
+                                <CategorySelect
+                                    onSelect={(value) => {
+                                        field.onChange(value);
+                                    }}
+                                    value={field.value}
+                                    defaultValue={field.value}
+                                />
                                 <FormMessage />
                             </FormItem>
                         )}

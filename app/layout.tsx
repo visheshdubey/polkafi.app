@@ -35,7 +35,7 @@ export default function RootLayout({
             <body className={`${inter.className} antialiased`}>
                 <RootProvider>
                     <div className="relative bg-[#FFF6F3] min-h-screen">
-                        <div className="max-w-screen-xl sticky z-20 top-0 lg:top-2 mx-auto">
+                        <div className="max-w-screen-xl sticky z-20 top-0 lg:px-4 lg:top-2 mx-auto">
                             <AppBar />
                         </div>
                         {children}
