@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 interface ProfileDetails {
     id: string;
     name: string | null;
+    email: string | null;
     avatar: string | null;
     defaultCurrency: string | null;
     credits: number;

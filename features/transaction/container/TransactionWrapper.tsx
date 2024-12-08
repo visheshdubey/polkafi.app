@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import KpiCard from "@/features/transaction/components/KpiCard";
 import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
-import { Plus } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { TransactionFilters } from "@/features/transaction/components/TransactionFilters";
 import { TransactionHeader } from "@/features/transaction/components/TransactionHeader";
 import TransactionListItem from "../components/TransactionListItem";
@@ -55,29 +56,36 @@ const TransactionWrapper = (props: Props) => {
 
             <MagicalGradientCard>
                 <div className="w-full shadow-sm flex flex-col *:border-b *:border-neutral-100 last-of-type:border-b-0 rounded-xl overflow-hidden bg-white">
+                    {data?.transactions.length === 0 && !isFetching && (
+                        <div className="w-full h-full py-16 px-4 flex flex-col items-center justify-center gap-3">
+                            <Image src="/assets/illustrations/undraw_no_data_re_kwbl.svg" alt="Empty State" width={100} height={100} />
+                            <p className="text-sm text-neutral-500">No transactions found</p>
+                        </div>
+                    )}
                     {data &&
                         data.transactions.map((item, index) => {
                             return <TransactionListItem key={`tansaction-list-item-${index}`} {...item} />;
                         })}
+                    {isFetching ? (
+                        <>
+                            <TransactionListItemSkeleton />
+                            <TransactionListItemSkeleton />
+                            <TransactionListItemSkeleton />
+                        </>
+                    ) : (
+                        <></>
+                    )}
                 </div>
-                {isFetching ? (
-                    <>
-                        <TransactionListItemSkeleton />
-                        <TransactionListItemSkeleton />
-                        <TransactionListItemSkeleton />
-                    </>
-                ) : (
-                    <></>
-                )}
+
                 <div className="size-20" ref={targetRef}></div>
             </MagicalGradientCard>
 
             <Button
                 onClick={() => router.push("app/new")}
                 size={"icon"}
-                className="lg:hidden fixed size-12 z-50 bottom-4 right-4 rounded-full"
+                className="lg:hidden fixed size-14 z-50 bottom-4 right-4 rounded-full"
             >
-                <Plus className="text-xl"></Plus>
+                <PlusIcon className="size-12" />
             </Button>
         </div>
     );

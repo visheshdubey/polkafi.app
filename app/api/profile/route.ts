@@ -1,21 +1,21 @@
 import { fetchUserProfile, updateUserProfile } from "@/server/db/profile";
+import { isUserUnauthorized, unauthorized } from "@/lib/utils/default-response";
 
 import { NextResponse } from "next/server";
 import { authOptions } from "@/features/auth/auth-options";
 import { get } from "lodash";
 import { getServerSession } from "next-auth";
-import { unauthorized } from "@/lib/utils/default-response";
 
 export async function GET() {
     try {
         const session = await getServerSession(authOptions);
-        const userEmail = get(session, "user.email");
+        const userId = get(session, "user.id");
 
-        if (!userEmail) {
+        if (isUserUnauthorized(userId)) {
             return unauthorized;
         }
 
-        const user = await fetchUserProfile(userEmail);
+        const user = await fetchUserProfile(userId);
 
         if (!user) {
             return new NextResponse("User not found", { status: 404 });
@@ -31,9 +31,9 @@ export async function GET() {
 export async function PUT(req: Request) {
     try {
         const session = await getServerSession(authOptions);
-        const userEmail = get(session, "user.email");
+        const userId = get(session, "user.id");
 
-        if (!userEmail) {
+        if (isUserUnauthorized(userId)) {
             return unauthorized;
         }
 
@@ -44,7 +44,7 @@ export async function PUT(req: Request) {
             return new NextResponse("Name is required", { status: 400 });
         }
 
-        const user = await updateUserProfile(userEmail, { name });
+        const user = await updateUserProfile(userId, { name });
 
         return NextResponse.json(user);
     } catch (error) {

@@ -33,6 +33,8 @@ export const fetchAllCategories = async (userId: string): Promise<Category[]> =>
         throw new Error(ERRORS.USER_ID_REQUIRED);
     }
 
+    console.log('fetching categories for user', userId);
+
     return await prisma.category.findMany({
         where: { userId },
         orderBy: { createdAt: 'desc' }

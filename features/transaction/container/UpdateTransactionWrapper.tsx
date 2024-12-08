@@ -1,6 +1,7 @@
 "use client";
 
 import { ButtonAsync } from "@/components/primitives/ui/button-async";
+import { DeleteTrxnAlert } from "../components/DeleteTrxnAlert";
 import { DynamicBreadcrumb } from "@/features/transaction/components/DynamicBreadcrumb";
 import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
 import PageTitle from "@/features/transaction/components/PageTitle";
@@ -35,14 +36,11 @@ const UpdateTransactionWrapper = ({ transactionId }: Props) => {
             <MagicalGradientCard className="flex flex-col">
                 <div className="flex items-center justify-between">
                     <span className="text-purple-800/70 font-medium text-sm">Update your transaction details below</span>
-                    <ButtonAsync
-                        variant={"ghost"}
-                        size={"icon"}
-                        isLoading={deleteTransactionPending}
-                        onClick={() => deleteTransaction(transactionId, { onSuccess: () => router.push("/app") })}
-                    >
-                        <Trash2 className="w-5 h-5 text-neutral-500" />
-                    </ButtonAsync>
+                    <DeleteTrxnAlert onDelete={() => deleteTransaction(transactionId, { onSuccess: () => router.push("/app") })}>
+                        <ButtonAsync variant={"ghost"} size={"icon"} isLoading={deleteTransactionPending}>
+                            <Trash2 className="w-5 h-5 text-neutral-500" />
+                        </ButtonAsync>
+                    </DeleteTrxnAlert>
                 </div>
 
                 <div className="w-full shadow-sm min-h-12 bg-white mt-4 lg:p-6 p-4 rounded-xl">

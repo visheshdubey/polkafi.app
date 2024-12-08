@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { cn } from "@/lib/utils/shadcn";
 
 type Props = {
@@ -9,10 +10,10 @@ type Props = {
 
 const BrandLogo = (props: Props) => {
     return (
-        <span className={cn("text-brand text-base flex items-center gap-1.5 tracking-tighter font-semibold", props.className)}>
+        <Link href="/" className={cn("text-brand text-base flex items-center gap-1.5 tracking-tighter font-semibold", props.className)}>
             <Image src="/assets/polka-fi-logo.png" alt="Polka fi" width={props.logoWidth || 14} height={props.logoHeight || 14} />
             Polka fi.
-        </span>
+        </Link>
     );
 };
 

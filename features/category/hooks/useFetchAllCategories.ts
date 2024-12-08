@@ -1,16 +1,8 @@
+import { Category } from "@prisma/client";
 import { QUERY_KEYS } from "@/lib/api-client/query-keys";
 import apiClient from "@/lib/api-client";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
-
-interface Category {
-    id: string;
-    name: string;
-    label: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userId: string;
-}
 
 const fetchCategories = async (): Promise<Category[]> => {
     const response = await apiClient.get({ path: 'category' });

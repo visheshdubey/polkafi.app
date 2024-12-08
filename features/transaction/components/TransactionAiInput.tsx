@@ -2,17 +2,25 @@ import { useEffect, useState } from "react";
 
 import { AudioRecorderWidget } from "@/features/audio-recorder/components/RecordAudio";
 import { Button } from "@/components/ui/button";
+import { ButtonAsync } from "@/components/primitives/ui/button-async";
 import { Input } from "@/components/ui/input";
 import { Mic } from "lucide-react";
 import { cn } from "@/lib/utils/shadcn";
 import { useStore } from "@/store/store";
+import { useTextToJson } from "@/features/audio-recorder/hooks/useTextToJson";
 
 type Props = {
     className?: string;
 };
 const TransactionAiInput = (props: Props) => {
-    const { transcribedText } = useStore((state) => state.recorder);
+    const { updateTranscribedText, transcribedText, parsedJson, updateParsedJson } = useStore((state) => state.recorder);
     const [inputValue, setInputValue] = useState(transcribedText.text);
+
+    const { mutate: convertTextToJson, isPending: isConvertingTextToJson } = useTextToJson({
+        onSuccess(data) {
+            updateParsedJson(data);
+        },
+    });
 
     useEffect(() => {
         setInputValue(transcribedText.text);
@@ -37,9 +45,13 @@ const TransactionAiInput = (props: Props) => {
                     </Button>
                 </AudioRecorderWidget>
             </div>
-            <Button className="lg:max-w-[240px] w-full h-10 lg:h-[52px] rounded-full text-sm lg:text-lg tracking-tight font-medium">
+            <ButtonAsync
+                onClick={() => convertTextToJson({ text: inputValue })}
+                disabled={isConvertingTextToJson}
+                className="lg:max-w-[240px] w-full h-10 lg:h-[52px] rounded-full text-sm lg:text-lg tracking-tight font-medium"
+            >
                 Analyze
-            </Button>
+            </ButtonAsync>
         </div>
     );
 };

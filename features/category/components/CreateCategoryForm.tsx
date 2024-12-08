@@ -39,9 +39,9 @@ export function CreateCategoryForm({ children }: { children: React.ReactNode }) 
     return (
         <Sheet>
             <SheetTrigger asChild>{children}</SheetTrigger>
-            <SheetContent>
+            <SheetContent className="p-2.5 lg:p-4">
                 <SheetHeader>
-                    <SheetTitle>Create New Category</SheetTitle>
+                    <SheetTitle className="text-start text-base lg:text-lg">Create New Category</SheetTitle>
                 </SheetHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
@@ -58,7 +58,7 @@ export function CreateCategoryForm({ children }: { children: React.ReactNode }) 
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full" disabled={isPending}>
+                        <Button type="submit" className="w-full rounded-full font-normal" disabled={isPending}>
                             {isPending ? "Creating..." : "Create Category"}
                         </Button>
                     </form>
