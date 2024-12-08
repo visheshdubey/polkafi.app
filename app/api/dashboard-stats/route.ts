@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isUserUnauthorized, unauthorized } from "@/lib/utils/default-response";
 
 import { get } from "lodash";
 import { getAuthSession } from "@/features/auth/utils";
@@ -10,8 +11,8 @@ export async function GET(request: NextRequest) {
         const session = await getAuthSession();
         const userId = get(session, "user.id");
 
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (isUserUnauthorized(userId)) {
+            return unauthorized;
         }
 
 

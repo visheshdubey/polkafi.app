@@ -66,9 +66,9 @@ export const GET = async (req: Request) => {
         const search = get(reqQueryObj, "search");
         const searchQueryParamFilters = queryStringToObject(search, { arrayFormat: "comma" });
 
-        // if (isUserUnauthorized(userId)) {
-        //     return unauthorized;
-        // }
+        if (isUserUnauthorized(userId)) {
+            return unauthorized;
+        }
 
         const trxns = await fetchPaginatedTransactions({ userId, searchQueryParams: searchQueryParamFilters });
 
