@@ -17,7 +17,7 @@ const AppBar = async (props: Props) => {
             <BrandLogo />
             <div className="flex ml-auto items-center gap-4">
                 {session && <ZapCounter />}
-                <Button size={"sm"} variant={"outline"} className="bg-transparent rounded-full shadow-none px-2.5 py-0.5">
+                <Button size={"sm"} variant={"outline"} className="bg-transparent hidden lg:block rounded-full shadow-none px-2.5 py-0.5">
                     Feedbacks
                 </Button>
                 {session ? (
