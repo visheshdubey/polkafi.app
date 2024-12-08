@@ -1,37 +1,21 @@
-import { isUserUnauthorized, unauthorized } from "@/lib/utils/default-response";
+import { fetchUserProfile, updateUserProfile } from "@/server/db/profile";
 
 import { NextResponse } from "next/server";
 import { authOptions } from "@/features/auth/auth-options";
 import { get } from "lodash";
 import { getServerSession } from "next-auth";
-import prisma from "@/server/db/prisma";
+import { unauthorized } from "@/lib/utils/default-response";
 
 export async function GET() {
     try {
         const session = await getServerSession(authOptions);
-        const userId = get(session, "user.id");
         const userEmail = get(session, "user.email");
 
-        if (isUserUnauthorized(userId)) {
+        if (!userEmail) {
             return unauthorized;
         }
 
-        if (userEmail === undefined) {
-            return unauthorized;
-        }
-
-        const user = await prisma.user.findUnique({
-            where: {
-                email: userEmail,
-            },
-            select: {
-                id: true,
-                name: true,
-                avatar: true,
-                defaultCurrency: true,
-                credits: true,
-            },
-        });
+        const user = await fetchUserProfile(userEmail);
 
         if (!user) {
             return new NextResponse("User not found", { status: 404 });
@@ -47,14 +31,9 @@ export async function GET() {
 export async function PUT(req: Request) {
     try {
         const session = await getServerSession(authOptions);
-        const userId = get(session, "user.id");
         const userEmail = get(session, "user.email");
 
-        if (isUserUnauthorized(userId)) {
-            return unauthorized;
-        }
-
-        if (userEmail === undefined) {
+        if (!userEmail) {
             return unauthorized;
         }
 
@@ -65,21 +44,7 @@ export async function PUT(req: Request) {
             return new NextResponse("Name is required", { status: 400 });
         }
 
-        const user = await prisma.user.update({
-            where: {
-                email: userEmail,
-            },
-            data: {
-                name,
-            },
-            select: {
-                id: true,
-                name: true,
-                avatar: true,
-                defaultCurrency: true,
-                credits: true,
-            },
-        });
+        const user = await updateUserProfile(userEmail, { name });
 
         return NextResponse.json(user);
     } catch (error) {
