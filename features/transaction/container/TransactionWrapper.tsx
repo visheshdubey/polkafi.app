@@ -1,11 +1,18 @@
 "use client";
 
+import {
+    AvailableFilters,
+    TransactionType,
+    TransactionTypeLabel,
+    mapFilterValueToTransactionType,
+    mapTransactionTypeToFilterValue,
+} from "@/lib/entities";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { Button } from "@/components/ui/button";
 import { CategorySelect } from "@/features/category/components/CategorySelect";
 import { CreateCategoryForm } from "@/features/category/components/CreateCategoryForm";
-import { DatePickerWithRange } from "@/components/primitives/ui/date-picker-with-range";
+import { DateRangePicker } from "@/components/primitives/ui/date-picker-with-range";
 import { DynamicBreadcrumb } from "@/features/transaction/components/DynamicBreadcrumb";
 import KpiCard from "@/features/transaction/components/KpiCard";
 import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
@@ -19,16 +26,18 @@ import { useEffect } from "react";
 import { useFetchInfiniteTrxns } from "@/features/transaction/hooks/useFetchInfiniteTransaction";
 import { useIntersectionObserver } from "../hooks/useIntersectionObserver";
 import { useRouter } from "next/navigation";
+import { useStore } from "@/store/store";
 
 type Props = {};
 
 const TransactionWrapper = (props: Props) => {
-    const { data, isFetching, isPending, fetchNextPage, hasNextPage } = useFetchInfiniteTrxns();
+    const { filters, updateFilter } = useStore((state) => state.trxn);
+    const { data, isFetching, isPending, fetchNextPage, hasNextPage } = useFetchInfiniteTrxns({ filters });
     const { targetRef, isIntersecting } = useIntersectionObserver({
         threshold: 0.1,
         enabled: !isFetching && hasNextPage,
     });
-    const { data: dashboardStats } = useDashboardStats(365);
+    const { data: dashboardStats } = useDashboardStats(filters);
     const router = useRouter();
 
     useEffect(() => {
@@ -40,19 +49,19 @@ const TransactionWrapper = (props: Props) => {
 
     const breadcrumbItems = [{ name: "App", path: "/" }];
 
-    const handleCategorySelect = (label: string) => {
-        console.log("Selected category:", label);
-    };
-
     return (
         <div className="max-w-screen-xl flex flex-col gap-3 lg:gap-6 px-3 lg:px-6 mx-auto w-full min-h-screen">
             <div className="mt-3 lg:mt-12">
                 <DynamicBreadcrumb items={breadcrumbItems} />
             </div>
 
-            <div className="flex flex-wrap items-baseline w-full gap-2">
+            <div className="flex flex-wrap items-center w-full gap-2">
                 <PageTitle>Transactions</PageTitle>
-                <DatePickerWithRange className="p-0" />
+                <DateRangePicker
+                    value={filters.date}
+                    onChange={(value) => updateFilter(AvailableFilters.date, value)}
+                    className="border border-neutral-300 ml-4 shadow-none rounded-full"
+                />
             </div>
 
             <MagicalGradientCard className="w-full flex items-center gap-6 overflow-x-auto scrollbar-none rounded-xl">
@@ -68,15 +77,22 @@ const TransactionWrapper = (props: Props) => {
 
             <div className="flex px-3 lg:px-6 items-center justify-between">
                 <div className="items-center flex gap-3 lg:gap-6">
-                    <CategorySelect className="h-8 w-[160px] rounded-full bg-white text-xs" onSelect={handleCategorySelect} />
+                    <CategorySelect
+                        className="h-8 w-[160px] rounded-full bg-white text-xs"
+                        value={filters.category[0]}
+                        onSelect={(value) => updateFilter(AvailableFilters.category, [value])}
+                    />
 
-                    <Select>
+                    <Select
+                        value={mapTransactionTypeToFilterValue(filters.type[0])}
+                        onValueChange={(value) => updateFilter(AvailableFilters.type, [mapFilterValueToTransactionType(value)])}
+                    >
                         <SelectTrigger className="h-8 w-[160px] rounded-full bg-white  gap-1 text-xs">
                             <SelectValue placeholder="Select Type" className="text-xs" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="light">Credit</SelectItem>
-                            <SelectItem value="dark">Debit</SelectItem>
+                            <SelectItem value={TransactionType.CREDIT}>{TransactionTypeLabel.CREDIT}</SelectItem>
+                            <SelectItem value={TransactionType.DEBIT}>{TransactionTypeLabel.DEBIT}</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>{" "}

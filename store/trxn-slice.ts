@@ -1,4 +1,4 @@
-import { AvailableFilters, FilterDefaultValues } from "@/lib/entities";
+import { AvailableFilters, FilterDefaultValues, TransactionType } from "@/lib/entities";
 
 import { ImmerStateCreator } from "./types";
 
@@ -7,9 +7,9 @@ type TrxnState = {
 };
 
 type TrxnFilters = {
-    [AvailableFilters.date]: (string | Date)[];
+    [AvailableFilters.date]: number[];
     [AvailableFilters.category]: string[];
-    [AvailableFilters.type]: number[];
+    [AvailableFilters.type]: TransactionType[];
 };
 
 type TrxnActions = {

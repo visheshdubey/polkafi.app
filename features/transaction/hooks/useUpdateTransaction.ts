@@ -7,11 +7,12 @@ import { toast } from "sonner";
 
 interface CreateTransactionParams {
     data: any;
+    id: string;
 }
 
-const updateTransaction = async ({ data }: CreateTransactionParams): Promise<Transaction> => {
+const updateTransaction = async ({ data, id }: CreateTransactionParams): Promise<Transaction> => {
     const response = await apiClient.put({
-        path: `transaction/${data.id}`,
+        path: `transaction/${id}`,
         data,
     });
     return response.json();

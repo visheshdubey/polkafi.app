@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useFetchAllCategories } from "@/features/category/hooks/useFetchAllCategories";
 
 interface CategorySelectProps {
-    onSelect: (label: string) => void;
+    onSelect: (id: string) => void;
     value?: string;
     defaultValue?: string;
     className?: string;
@@ -11,15 +11,15 @@ interface CategorySelectProps {
 
 export const CategorySelect = ({ onSelect, value, defaultValue, className }: CategorySelectProps) => {
     const { data: categories } = useFetchAllCategories();
-
     return (
         <Select onValueChange={onSelect} value={value} defaultValue={defaultValue}>
             <SelectTrigger className={`${className}`}>
                 <SelectValue placeholder="Select Category" className="text-sm" />
             </SelectTrigger>
+
             <SelectContent>
                 {categories?.map((category) => (
-                    <SelectItem key={category.id} value={category.label}>
+                    <SelectItem key={category.id} value={category.id}>
                         {category.name}
                     </SelectItem>
                 ))}

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { get } from "lodash";
 import { getAuthSession } from "@/features/auth/utils";
 import { getDashboardStats } from "@/server/db/transactions/stats";
+import { queryStringToObject } from "@/lib/utils";
 
 export async function GET(request: NextRequest) {
     try {
@@ -15,8 +16,10 @@ export async function GET(request: NextRequest) {
 
 
         const searchParams = request.nextUrl.searchParams;
-        const dayRange = parseInt(searchParams.get("dayRange") || "30");
-
+        const dayRange = parseInt(searchParams.get("date") || "30");
+        const reqQueryObj = new URL(request.url || "");
+        const search = get(reqQueryObj, "search");
+        const searchQueryParamFilters = queryStringToObject(search, { arrayFormat: "comma" });
         const validRanges = [1, 7, 30, 90, 180, 365];
         if (!validRanges.includes(dayRange)) {
             return NextResponse.json(
@@ -25,7 +28,7 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const stats = await getDashboardStats(userId, dayRange);
+        const stats = await getDashboardStats(userId, dayRange, searchQueryParamFilters);
         return NextResponse.json(stats);
 
     } catch (error) {
