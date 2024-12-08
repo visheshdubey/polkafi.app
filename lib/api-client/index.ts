@@ -109,6 +109,13 @@ class APIClient {
     }
 }
 
-const apiClient = APIClient.getInstance(process.env.BASE_URL_API || 'http://localhost:3000/api/')
+let apiClient: APIClient | null = null;
+
+if (typeof window !== 'undefined') {
+    apiClient = APIClient.getInstance(window.location.origin + '/api/')
+}
+else {
+    apiClient = APIClient.getInstance(process.env.BASE_URL_API || 'http://localhost:3000/api/')
+}
 
 export default apiClient
