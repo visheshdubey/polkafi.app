@@ -67,7 +67,7 @@ export const FilterOptions = Object.freeze({
 
 export const FilterDefaultValues = {
     [AvailableFilters.date]: [dashboardStatsDayRangeOptions.last30Days],
-    [AvailableFilters.type]: [TransactionType.CREDIT],
+    [AvailableFilters.type]: [],
     [AvailableFilters.category]: [],
 };
 

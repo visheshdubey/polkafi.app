@@ -1,23 +1,11 @@
 "use client";
 
-import {
-    AvailableFilters,
-    TransactionType,
-    TransactionTypeLabel,
-    mapFilterValueToTransactionType,
-    mapTransactionTypeToFilterValue,
-} from "@/lib/entities";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
 import { Button } from "@/components/ui/button";
-import { CategorySelect } from "@/features/category/components/CategorySelect";
-import { CreateCategoryForm } from "@/features/category/components/CreateCategoryForm";
-import { DateRangePicker } from "@/components/primitives/ui/date-picker-with-range";
-import { DynamicBreadcrumb } from "@/features/transaction/components/DynamicBreadcrumb";
 import KpiCard from "@/features/transaction/components/KpiCard";
 import MagicalGradientCard from "@/features/transaction/components/MagicalGradientCard";
-import PageTitle from "@/features/transaction/components/PageTitle";
 import { Plus } from "lucide-react";
+import { TransactionFilters } from "@/features/transaction/components/TransactionFilters";
+import { TransactionHeader } from "@/features/transaction/components/TransactionHeader";
 import TransactionListItem from "../components/TransactionListItem";
 import TransactionListItemSkeleton from "../components/TransactionListItemSkeleton";
 import { TransactionSummaryChart } from "@/features/transaction/components/TransactionSummaryChart";
@@ -31,8 +19,8 @@ import { useStore } from "@/store/store";
 type Props = {};
 
 const TransactionWrapper = (props: Props) => {
-    const { filters, updateFilter } = useStore((state) => state.trxn);
-    const { data, isFetching, isPending, fetchNextPage, hasNextPage } = useFetchInfiniteTrxns({ filters });
+    const { filters } = useStore((state) => state.trxn);
+    const { data, isFetching, fetchNextPage, hasNextPage } = useFetchInfiniteTrxns({ filters });
     const { targetRef, isIntersecting } = useIntersectionObserver({
         threshold: 0.1,
         enabled: !isFetching && hasNextPage,
@@ -43,7 +31,6 @@ const TransactionWrapper = (props: Props) => {
     useEffect(() => {
         if (isIntersecting && hasNextPage) {
             fetchNextPage();
-            console.log("fetching next page");
         }
     }, [isIntersecting, hasNextPage, fetchNextPage]);
 
@@ -51,18 +38,7 @@ const TransactionWrapper = (props: Props) => {
 
     return (
         <div className="max-w-screen-xl flex flex-col gap-3 lg:gap-6 px-3 lg:px-6 mx-auto w-full min-h-screen">
-            <div className="mt-3 lg:mt-12">
-                <DynamicBreadcrumb items={breadcrumbItems} />
-            </div>
-
-            <div className="flex flex-wrap items-center w-full gap-2">
-                <PageTitle>Transactions</PageTitle>
-                <DateRangePicker
-                    value={filters.date}
-                    onChange={(value) => updateFilter(AvailableFilters.date, value)}
-                    className="border border-neutral-300 ml-4 shadow-none rounded-full"
-                />
-            </div>
+            <TransactionHeader breadcrumbItems={breadcrumbItems} />
 
             <MagicalGradientCard className="w-full flex items-center gap-6 overflow-x-auto scrollbar-none rounded-xl">
                 <div className="bg-white shadow-sm w-1/3 min-w-[320px] rounded-xl p-4 grow h-44">
@@ -75,38 +51,8 @@ const TransactionWrapper = (props: Props) => {
                 </div>
             </MagicalGradientCard>
 
-            <div className="flex px-3 lg:px-6 items-center justify-between">
-                <div className="items-center flex gap-3 lg:gap-6">
-                    <CategorySelect
-                        className="h-8 w-[160px] rounded-full bg-white text-xs"
-                        value={filters.category[0]}
-                        onSelect={(value) => updateFilter(AvailableFilters.category, [value])}
-                    />
+            <TransactionFilters onFetchNextPage={fetchNextPage} />
 
-                    <Select
-                        value={mapTransactionTypeToFilterValue(filters.type[0])}
-                        onValueChange={(value) => updateFilter(AvailableFilters.type, [mapFilterValueToTransactionType(value)])}
-                    >
-                        <SelectTrigger className="h-8 w-[160px] rounded-full bg-white  gap-1 text-xs">
-                            <SelectValue placeholder="Select Type" className="text-xs" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value={TransactionType.CREDIT}>{TransactionTypeLabel.CREDIT}</SelectItem>
-                            <SelectItem value={TransactionType.DEBIT}>{TransactionTypeLabel.DEBIT}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>{" "}
-                <div className="hidden lg:flex items-center gap-3">
-                    <CreateCategoryForm>
-                        <Button onClick={() => fetchNextPage()} size={"sm"} variant={"outline"} className="bg-transparent rounded-full">
-                            <Plus /> New Category
-                        </Button>
-                    </CreateCategoryForm>
-                    <Button size={"sm"} className="rounded-full" onClick={() => router.push("app/new")}>
-                        <Plus /> New Transaction
-                    </Button>
-                </div>
-            </div>
             <MagicalGradientCard>
                 <div className="w-full shadow-sm flex flex-col *:border-b *:border-neutral-100 last-of-type:border-b-0 rounded-xl overflow-hidden bg-white">
                     {data &&
