@@ -40,10 +40,10 @@ export const TransactionFilters = ({ onFetchNextPage }: Props) => {
     };
 
     return (
-        <div className="flex px-3 lg:px-6 items-center justify-between">
-            <div className="items-center flex gap-3 lg:gap-6">
+        <div className="flex  px-3 lg:px-6 items-center justify-between">
+            <div className="items-center flex-wrap lg:flex-nowrap flex gap-3 lg:gap-6">
                 <CategorySelect
-                    className="h-8 w-[160px] rounded-full bg-white text-xs"
+                    className="h-8 w-full lg:w-[160px] rounded-full bg-white text-xs"
                     value={filters.category[0] || ""}
                     onSelect={(value) => updateFilter(AvailableFilters.category, [value])}
                 />
@@ -52,7 +52,7 @@ export const TransactionFilters = ({ onFetchNextPage }: Props) => {
                     value={getTransactionTypeValue()}
                     onValueChange={(value) => updateFilter(AvailableFilters.type, [mapFilterValueToTransactionType(value)])}
                 >
-                    <SelectTrigger className="h-8 w-[160px] rounded-full bg-white gap-1 text-xs">
+                    <SelectTrigger className="h-8 w-full lg:w-[160px] rounded-full bg-white gap-1 text-xs">
                         <SelectValue placeholder="Select Type" className="text-xs" />
                     </SelectTrigger>
                     <SelectContent>
@@ -61,7 +61,7 @@ export const TransactionFilters = ({ onFetchNextPage }: Props) => {
                     </SelectContent>
                 </Select>
                 {hasFilters() && (
-                    <Button size={"sm"} variant={"link"} className="bg-transparent rounded-full -ml-3" onClick={clearFilters}>
+                    <Button size={"sm"} variant={"link"} className="bg-transparent rounded-full lg:-ml-3" onClick={clearFilters}>
                         Clear Filters <X className="size-2.5" />
                     </Button>
                 )}

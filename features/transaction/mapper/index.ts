@@ -1,11 +1,11 @@
-import { Transaction, TransactionType } from "@prisma/client";
+import { Category, Transaction, TransactionType } from "@prisma/client";
 
 import { InfiniteData } from "@tanstack/react-query";
 import { PaginatedResponse } from "@/lib/types/shared";
 import { TransactionListItemProps } from "../components/TransactionListItem";
 import { get } from "lodash";
 
-type TransactionQueryType = InfiniteData<PaginatedResponse<Transaction>>;
+type TransactionQueryType = InfiniteData<PaginatedResponse<Transaction & { category: Category }>>;
 
 export const mapInfiniteTransactionAPIResToUI = (query: TransactionQueryType): TransactionListItemProps[] => {
     const pages = get(query, "pages", []);
@@ -18,6 +18,7 @@ export const mapInfiniteTransactionAPIResToUI = (query: TransactionQueryType): T
             shortId: getShortTransactionId(item.id),
             particular: getParticulars(item.particular),
             amount: BigInt(item.amount),
+            category: get(item, "category.name", undefined),
             type: item.type as TransactionType,
             date: item.createdAt,
         };

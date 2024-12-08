@@ -40,7 +40,7 @@ const TransactionWrapper = (props: Props) => {
         <div className="max-w-screen-xl flex flex-col gap-3 lg:gap-6 px-3 lg:px-6 mx-auto w-full min-h-screen">
             <TransactionHeader breadcrumbItems={breadcrumbItems} />
 
-            <MagicalGradientCard className="w-full flex items-center gap-6 overflow-x-auto scrollbar-none rounded-xl">
+            <MagicalGradientCard className="w-full mt-3 lg:mt-0 flex items-center gap-6 overflow-x-auto scrollbar-none rounded-xl">
                 <div className="bg-white shadow-sm w-1/3 min-w-[320px] rounded-xl p-4 grow h-44">
                     <TransactionSummaryChart data={dashboardStats?.charts} />
                 </div>

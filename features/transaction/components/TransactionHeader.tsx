@@ -13,16 +13,16 @@ export const TransactionHeader = ({ breadcrumbItems }: Props) => {
 
     return (
         <>
-            <div className="mt-3 lg:mt-12">
+            <div className="mt-3 md:mt-12">
                 <DynamicBreadcrumb items={breadcrumbItems} />
             </div>
 
-            <div className="flex flex-wrap items-center w-full gap-2">
+            <div className="flex gap-x-4 flex-wrap items-center w-full gap-y-2">
                 <PageTitle>Transactions</PageTitle>
                 <DateRangePicker
                     value={filters.date}
                     onChange={(value) => updateFilter(AvailableFilters.date, value)}
-                    className="border border-neutral-300 ml-4 shadow-none rounded-full"
+                    className="border-0 border-b md:border border-neutral-300 shadow-none rounded-none md:rounded-full"
                 />
             </div>
         </>

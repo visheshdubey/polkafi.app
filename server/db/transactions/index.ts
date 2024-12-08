@@ -99,6 +99,9 @@ export const fetchPaginatedTransactions: FetchPaginatedTransactions = async ({ u
         orderBy: {
             id: "asc",
         },
+        include: {
+            category: true,
+        },
     });
 
     const totalItemsInDb = await db.transaction.count({ where });

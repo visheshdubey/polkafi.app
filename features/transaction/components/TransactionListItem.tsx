@@ -44,10 +44,10 @@ const TransactionListItem: React.FC<TransactionListItemProps> = ({
             href={`/app/${transactionId}`}
             className={cn("bg-white flex justify-between items-center lg:items-end gap-2 w-full p-3 lg:p-4", className)}
         >
-            <div className="flex flex-col gap-1 lg:gap-2">
+            <div className="flex w-full flex-col gap-1 lg:gap-2">
                 <span className="text-[11px] text-neutral-400">{shortId}</span>
-                <div className="flex items-center flex-wrap gap-3 lg:gap-6">
-                    <div className="text-sm/[120%] grow lg:grow-0 lg:text-lg font-medium text-neutral-800">{description}</div>
+                <div className="grow lg:grow-0 lg:text-lg font-medium text-neutral-800">{description}</div>
+                <div className="flex items-center justify-between w-full mt-2 lg:mt-1 flex-wrap gap-3 lg:gap-6">
                     <div className="flex *:rounded-full items-center flex-wrap gap-2">
                         {category && (
                             <Badge variant="secondary" className="font-normal text-xs">
