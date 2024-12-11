@@ -18,7 +18,7 @@ const AppBar = async (props: Props) => {
             <div className="flex ml-auto items-center gap-4">
                 {session && <ZapCounter />}
                 <Button size={"sm"} variant={"outline"} className="bg-transparent hidden lg:block rounded-full shadow-none px-2.5 py-0.5">
-                    Feedbacks
+                    <Link href="mailto:visheshdubey.work@gmail.com">Feedbacks</Link>
                 </Button>
                 {session ? (
                     <LoggedInUserProfileMenu />

@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 type Props = {
     className?: string;
@@ -31,7 +32,7 @@ const Hero = (props: Props) => {
             </div>
             <div className="w-full flex justify-start sm:justify-center px-4 sm:px-0">
                 <Button className="text-white rounded-full max-w-[180px] sm:max-w-[240px] font-bold w-full h-9 sm:h-11 bg-brand">
-                    Try Now
+                    <Link href="/signin">Try Now</Link>
                 </Button>
             </div>
 

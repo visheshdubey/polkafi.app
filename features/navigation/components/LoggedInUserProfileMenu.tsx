@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 
+import Link from "next/link";
 import { get } from "lodash";
 import { useRouter } from "next/navigation";
 
@@ -31,8 +32,12 @@ const ProfileMenu = (props: Props) => {
                 <DropdownMenuItem onClick={() => router.push("/settings")}>My Account</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/settings")}>Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => router.push("/settings")}>Request credits</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/settings")}>Feedbacks</DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link href="mailto:visheshdubey.work@gmail.com">Request credits</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <Link href="mailto:visheshdubey.work@gmail.com">Feedbacks</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>Log Out</DropdownMenuItem>
             </DropdownMenuContent>

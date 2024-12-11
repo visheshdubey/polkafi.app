@@ -1,11 +1,11 @@
 import { createUser, findUserByEmail } from "@/server/db/user/UserRepository";
 
 import { GithubAuth } from "@/features/auth/providers/github";
-import { GoogleAuth } from "@/features/auth/providers/google";
 import { NextAuthOptions } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
-    providers: [GoogleAuth, GithubAuth],
+    // providers: [GoogleAuth, GithubAuth],
+    providers: [GithubAuth],
     secret: process.env.NEXTAUTH_SECRET,
 
     session: {
