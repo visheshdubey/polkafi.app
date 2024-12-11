@@ -19,10 +19,13 @@ const SignInForm = ({ providers }: Props) => {
                     <p className="mb-2">Welcome to </p>
                     <BrandLogo className="text-2xl font-bold"></BrandLogo>
                 </h1>
-                {providers &&
-                    Object.values(providers).map((provider) => (
-                        <OAuthProviderButton key={`oauth-button-${provider.name}`} provider={provider} />
-                    ))}
+                {
+                    providers && (
+                        // Object.values(providers)["github"].map((provider) => (
+                        <OAuthProviderButton key={`oauth-button-${providers["github"].name}`} provider={providers["github"]} />
+                    )
+                    // ))
+                }
             </div>
             <BackgroundGradient />
         </div>
